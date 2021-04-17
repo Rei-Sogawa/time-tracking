@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 export default function App() {
   const { minutes, seconds, on, start, stop, clear } = useTimer();
@@ -9,8 +10,8 @@ export default function App() {
 
   return (
     <div className="h-screen bg-gray-100">
-      <div className="h-full container mx-auto flex items-center">
-        <div className="flex-1 flex-col space-y-10 pb-24">
+      <div className="h-full max-w-3xl mx-auto flex items-center">
+        <div className="flex-1 flex-col space-y-10">
           <div className="text-center text-9xl font-mono">
             {displayMinutes}:{displaySeconds}
           </div>
@@ -21,9 +22,19 @@ export default function App() {
             <XLargeWhiteButton onClick={() => stop()} disabled={!on}>
               STOP
             </XLargeWhiteButton>
-            <XLargeWhiteButton onClick={() => clear()} disabled={on}>
-              CLEAR
+            <XLargeWhiteButton
+              onClick={() => clear()}
+              disabled={on || !seconds}
+            >
+              DONE
             </XLargeWhiteButton>
+          </div>
+          <div>
+            <TaskForm
+              onSubmit={(values) => {
+                console.log(values);
+              }}
+            />
           </div>
         </div>
       </div>
@@ -39,8 +50,9 @@ function XLargeWhiteButton(
       {...props}
       type="button"
       className={classNames(
-        'inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
-        { 'opacity-50': props.disabled, 'cursor-not-allowed': props.disabled }
+        'inline-flex items-center border border-gray-300 rounded-md shadow-sm px-6 py-3 text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
+        { 'opacity-50': props.disabled, 'cursor-not-allowed': props.disabled },
+        props.className
       )}
     ></button>
   );
@@ -71,4 +83,35 @@ function useTimer() {
     stop,
     clear,
   };
+}
+
+const TextInput = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>((props: React.InputHTMLAttributes<HTMLInputElement>, ref) => (
+  <input
+    type="text"
+    className={classNames(
+      'block w-full border border-gray-300 rounded-md shadow-sm px-6 py-3 text-base font-medium text-gray-700 placeholder-gray-400 bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500',
+      props.className
+    )}
+    {...props}
+    ref={ref}
+  />
+));
+
+type TaskFormValues = { taskName: string };
+
+function TaskForm({ onSubmit }: { onSubmit: SubmitHandler<TaskFormValues> }) {
+  const { register, handleSubmit, reset } = useForm();
+  return (
+    <form
+      onSubmit={handleSubmit((data: TaskFormValues) => {
+        onSubmit(data);
+        reset();
+      })}
+    >
+      <TextInput {...register('taskName')} placeholder="新しいタスク" />
+    </form>
+  );
 }
