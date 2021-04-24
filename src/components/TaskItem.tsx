@@ -29,9 +29,6 @@ export default function TaskItem() {
         <XSWhiteButton onClick={() => stop()} disabled={!running}>
           STOP
         </XSWhiteButton>
-        <XSWhiteButton onClick={() => clear()} disabled={running || !seconds}>
-          DONE
-        </XSWhiteButton>
       </div>
     </div>
   );

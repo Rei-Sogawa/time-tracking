@@ -1,14 +1,12 @@
-import { useEffect } from "react";
-
+import TaskForm from "./components/TaskForm";
 import TaskItem from "./components/TaskItem";
-import { db } from "./firebaseApp";
-import { Task } from "./models";
 
 export default function App() {
   return (
-    <div className="h-screen bg-gray-100">
-      <div className="container mx-auto py-5">
+    <div className="h-screen bg-white">
+      <div className="max-w-screen-md mx-auto py-5">
         <div className="space-y-3">
+          <TaskForm onSubmit={(values) => console.log(values)} />
           <TaskItem></TaskItem>
           <TaskItem></TaskItem>
         </div>
