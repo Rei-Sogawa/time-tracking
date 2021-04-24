@@ -1,4 +1,9 @@
-import { DocumentReference, serverTimestamp, Timestamp } from "../firebaseApp";
+import {
+  DocumentReference,
+  fromDate,
+  serverTimestamp,
+  Timestamp,
+} from "../firebaseApp";
 
 type ITask = {
   id: string;
@@ -12,7 +17,7 @@ type ITask = {
   createdAt: Date;
 };
 
-type DataOnFirestore = Omit<
+type FirestoreDate = Omit<
   ITask,
   "id" | "ref" | "startedTimeRecords" | "stoppedTimeRecords" | "createdAt"
 > & {
@@ -42,7 +47,7 @@ export default class Task implements ITask {
     startedTimeRecords,
     stoppedTimeRecords,
     createdAt,
-  }: DataOnFirestore & {
+  }: FirestoreDate & {
     id: string;
     ref: DocumentReference;
   }) {
@@ -57,7 +62,19 @@ export default class Task implements ITask {
     this.createdAt = createdAt.toDate();
   }
 
-  static getDefaultFirestoreData(): DataOnFirestore {
+  toFirestoreData(): FirestoreDate {
+    return {
+      title: this.title,
+      body: this.body,
+      category: this.category,
+      completed: this.completed,
+      startedTimeRecords: this.startedTimeRecords.map((_) => fromDate(_)),
+      stoppedTimeRecords: this.startedTimeRecords.map((_) => fromDate(_)),
+      createdAt: fromDate(this.createdAt),
+    };
+  }
+
+  static getDefaultFirestoreData(): FirestoreDate {
     return {
       title: "",
       body: "",

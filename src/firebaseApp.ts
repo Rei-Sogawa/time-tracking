@@ -2,6 +2,12 @@ import "firebase/firestore";
 
 import firebase from "firebase/app";
 
+export type DocumentReference = firebase.firestore.DocumentReference;
+export type Timestamp = firebase.firestore.Timestamp;
+
+export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
+export const fromDate = firebase.firestore.Timestamp.fromDate;
+
 if (!firebase.apps.length) {
   firebase.initializeApp({
     apiKey: "AIzaSyAbEcwQm6gym4qPYLO-grpFvwoutSF-TsI",
@@ -15,7 +21,3 @@ if (!firebase.apps.length) {
 }
 
 export const db = firebase.firestore();
-
-export type DocumentReference = firebase.firestore.DocumentReference;
-export type Timestamp = firebase.firestore.Timestamp;
-export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
