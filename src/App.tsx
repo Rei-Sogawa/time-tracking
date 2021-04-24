@@ -1,4 +1,8 @@
+import { useEffect } from "react";
+
 import TaskItem from "./components/TaskItem";
+import { db } from "./firebaseApp";
+import { Task } from "./models";
 
 export default function App() {
   return (

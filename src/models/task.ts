@@ -1,4 +1,4 @@
-import { serverTimestamp, DocumentReference, Timestamp } from "./index";
+import { DocumentReference, serverTimestamp, Timestamp } from "../firebaseApp";
 
 type DataOnFirestore = Omit<
   Task,
@@ -9,7 +9,7 @@ type DataOnFirestore = Omit<
   createdAt: Timestamp;
 };
 
-class Task {
+export default class Task {
   id: string;
   ref: DocumentReference;
   title: string;

@@ -1,6 +1,3 @@
-import firebase from "firebase/app";
+import _Task from "./task";
 
-export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
-
-export type DocumentReference = firebase.firestore.DocumentReference;
-export type Timestamp = firebase.firestore.Timestamp;
+export const Task = _Task;

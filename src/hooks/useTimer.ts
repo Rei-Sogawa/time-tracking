@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { differenceInMilliseconds, differenceInSeconds } from "date-fns";
 import { zip } from "ramda";
-import { differenceInSeconds, differenceInMilliseconds } from "date-fns";
+import { useMemo, useState } from "react";
 
 export function useTimer({
   pastRecords = { startedTimeRecords: [], stoppedTimeRecords: [] },
