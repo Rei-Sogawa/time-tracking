@@ -1,21 +1,22 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { SWhiteButton, XSWhiteButton } from "../basics/button";
-import { useTimer } from "../hooks/useTimer";
-import * as Task from "../models/task";
+import { SWhiteButton, XSWhiteButton } from '../basics/button';
+import { DocumentReference, serverTimestamp, Timestamp } from '../firebaseApp';
+import { useTimer } from '../hooks/useTimer';
+import * as Task from '../models/task';
 
 type Props = {
-  task: Task.Data;
+  task: Task.Data & { id: string; ref: DocumentReference };
 };
 
 export default function TaskItem({ task }: Props) {
-  const [focusing, setFocusing] = useState(false);
+  const [focused, setFocused] = useState(false);
   const { totalSeconds, running, start, stop, clear } = useTimer({});
 
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds - minutes * 60;
-  const displayMinutes = minutes.toString().padStart(2, "0");
-  const displaySeconds = seconds.toString().padStart(2, "0");
+  const displayMinutes = minutes.toString().padStart(2, '0');
+  const displaySeconds = seconds.toString().padStart(2, '0');
 
   return (
     <div>
@@ -29,23 +30,23 @@ export default function TaskItem({ task }: Props) {
         <div className="w-32 flex justify-end">
           <div className="px-2">{task.estimatedSeconds}</div>
         </div>
-        {focusing ? (
+        {focused ? (
           <SWhiteButton
             className="w-16 justify-center"
-            onClick={() => setFocusing(false)}
+            onClick={() => setFocused(false)}
           >
             BACK
           </SWhiteButton>
         ) : (
           <SWhiteButton
             className="w-16 justify-center"
-            onClick={() => setFocusing(true)}
+            onClick={() => setFocused(true)}
           >
             FOCUS
           </SWhiteButton>
         )}
       </div>
-      {focusing && (
+      {focused && (
         <div className="py-3 space-y-2">
           <div className="text-center text-5xl font-mono">
             {displayMinutes}:{displaySeconds}
@@ -58,8 +59,14 @@ export default function TaskItem({ task }: Props) {
               STOP
             </XSWhiteButton>
             <XSWhiteButton
-              onClick={() => clear()}
-              disabled={running || !seconds}
+              onClick={() => {
+                clear();
+                const updatedData: Partial<Task.FirestoreData> = {
+                  completedAt: serverTimestamp() as Timestamp,
+                };
+                task.ref.update(updatedData);
+              }}
+              disabled={running}
             >
               DONE
             </XSWhiteButton>

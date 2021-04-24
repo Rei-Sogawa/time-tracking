@@ -1,7 +1,7 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { SWhiteButton } from "../basics/button";
-import { InputText } from "../basics/input";
+import { SWhiteButton } from '../basics/button';
+import { InputText } from '../basics/input';
 
 type Props = {
   onSubmit: SubmitHandler<FormValues>;
@@ -26,16 +26,16 @@ export default function TaskForm({ onSubmit }: Props) {
       }}
     >
       <div className="w-32">
-        <InputText placeholder="category" {...register("category")} />
+        <InputText placeholder="category" {...register('category')} />
       </div>
       <div className="flex-1">
-        <InputText placeholder="title" {...register("title")} />
+        <InputText placeholder="title" {...register('title')} />
       </div>
       <div className="w-32">
-        <InputText placeholder="minutes" {...register("estimatedMinutes")} />
+        <InputText placeholder="minutes" {...register('estimatedMinutes')} />
       </div>
       <SWhiteButton className="w-16 justify-center" type="submit">
-        ADD
+        POST
       </SWhiteButton>
     </form>
   );

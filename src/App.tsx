@@ -1,15 +1,20 @@
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-import TaskForm, { FormValues } from "./components/TaskForm";
-import TaskItem from "./components/TaskItem";
-import { db } from "./firebaseApp";
-import * as Task from "./models/task";
+import TaskForm, { FormValues } from './components/TaskForm';
+import TaskItem from './components/TaskItem';
+import { db } from './firebaseApp';
+import * as Task from './models/task';
 
 export default function App() {
-  const [tasks] = useCollectionData<Task.Data>(db.collection("tasks"), {
-    transform: Task.fromFirestore,
-    snapshotOptions: { serverTimestamps: "estimate" },
-  });
+  const [tasks] = useCollectionData<Task.Data, 'id', 'ref'>(
+    db.collection('tasks'),
+    {
+      transform: Task.fromFirestore,
+      snapshotOptions: { serverTimestamps: 'estimate' },
+      idField: 'id',
+      refField: 'ref',
+    }
+  );
 
   const onSubmit = (values: FormValues) => {
     const { title, category, estimatedMinutes } = values;
@@ -19,7 +24,8 @@ export default function App() {
       category,
       estimatedSeconds: Number(estimatedMinutes),
     };
-    db.collection("tasks").add(newTask);
+    debugger;
+    db.collection('tasks').add(newTask);
   };
 
   return (
@@ -28,16 +34,13 @@ export default function App() {
         <div className="space-y-3">
           <TaskForm onSubmit={onSubmit} />
           <div className="space-y-1.5">
-            {tasks?.map((task, index) =>
-              index === 0 ? (
-                <TaskItem task={task} />
-              ) : (
-                <>
-                  <hr />
+            {tasks
+              ?.filter((task) => !Task.isComplete(task))
+              .map((task) => (
+                <div key={task.id}>
                   <TaskItem task={task} />
-                </>
-              )
-            )}
+                </div>
+              ))}
           </div>
         </div>
       </div>

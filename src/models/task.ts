@@ -1,4 +1,4 @@
-import { fromDate, serverTimestamp, Timestamp } from "../firebaseApp";
+import { fromDate, serverTimestamp, Timestamp } from '../firebaseApp';
 
 export type Data = {
   title: string;
@@ -6,19 +6,20 @@ export type Data = {
   category: string;
   estimatedSeconds: number;
   requiredSeconds: number;
-  completed: boolean;
   startTimeRecords: Date[];
   stopTimeRecords: Date[];
   createdAt: Date;
+  completedAt: Date | null;
 };
 
 export type FirestoreData = Omit<
   Data,
-  "startTimeRecords" | "stopTimeRecords" | "createdAt"
+  'startTimeRecords' | 'stopTimeRecords' | 'createdAt' | 'completedAt'
 > & {
   startTimeRecords: Timestamp[];
   stopTimeRecords: Timestamp[];
   createdAt: Timestamp;
+  completedAt: Timestamp | null;
 };
 
 export const toFirestore: (data: Data) => FirestoreData = (data) => ({
@@ -26,6 +27,7 @@ export const toFirestore: (data: Data) => FirestoreData = (data) => ({
   startTimeRecords: data.startTimeRecords.map(fromDate),
   stopTimeRecords: data.stopTimeRecords.map(fromDate),
   createdAt: fromDate(data.createdAt),
+  completedAt: data.completedAt ? fromDate(data.completedAt) : null,
 });
 
 export const fromFirestore: (firestoreData: FirestoreData) => Data = (
@@ -35,21 +37,26 @@ export const fromFirestore: (firestoreData: FirestoreData) => Data = (
   startTimeRecords: firestoreData.startTimeRecords.map((_) => _.toDate()),
   stopTimeRecords: firestoreData.startTimeRecords.map((_) => _.toDate()),
   createdAt: firestoreData.createdAt.toDate(),
+  completedAt: firestoreData.completedAt
+    ? firestoreData.completedAt.toDate()
+    : null,
 });
 
 export const getDefaultData: () => Data = () => ({
-  title: "",
-  body: "",
-  category: "",
+  title: '',
+  body: '',
+  category: '',
   estimatedSeconds: 0,
   requiredSeconds: 0,
-  completed: false,
   startTimeRecords: [],
   stopTimeRecords: [],
   createdAt: new Date(),
+  completedAt: null,
 });
 
 export const getDefaultFirestoreData: () => FirestoreData = () => ({
   ...toFirestore(getDefaultData()),
   createdAt: serverTimestamp() as Timestamp,
 });
+
+export const isComplete = (data: Data) => !!data.completedAt;
