@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import classNames from 'classnames';
+import React from "react";
+import classNames from "classnames";
+
+import { useTimer } from "./hooks/useTimer";
 
 export default function App() {
-  const { seconds: totalSecond, on, start, stop, clear } = useTimer();
-  const minutes = Math.floor(totalSecond / 60);
-  const seconds = totalSecond - minutes * 60;
-  const displayMinutes = minutes.toString().padStart(2, '0');
-  const displaySeconds = seconds.toString().padStart(2, '0');
+  const { totalSeconds, running, start, stop, clear } = useTimer();
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds - minutes * 60;
+  const displayMinutes = minutes.toString().padStart(2, "0");
+  const displaySeconds = seconds.toString().padStart(2, "0");
 
   return (
     <div className="h-screen bg-gray-100">
@@ -16,15 +18,15 @@ export default function App() {
             {displayMinutes}:{displaySeconds}
           </div>
           <div className="flex justify-center space-x-3">
-            <XLargeWhiteButton onClick={() => start()} disabled={on}>
+            <XLargeWhiteButton onClick={() => start()} disabled={running}>
               START
             </XLargeWhiteButton>
-            <XLargeWhiteButton onClick={() => stop()} disabled={!on}>
+            <XLargeWhiteButton onClick={() => stop()} disabled={!running}>
               STOP
             </XLargeWhiteButton>
             <XLargeWhiteButton
               onClick={() => clear()}
-              disabled={on || !seconds}
+              disabled={running || !seconds}
             >
               DONE
             </XLargeWhiteButton>
@@ -43,34 +45,10 @@ function XLargeWhiteButton(
       {...props}
       type="button"
       className={classNames(
-        'inline-flex items-center border border-gray-300 rounded-md shadow-sm px-6 py-3 text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
-        { 'opacity-50': props.disabled, 'cursor-not-allowed': props.disabled },
+        "inline-flex items-center border border-gray-300 rounded-md shadow-sm px-6 py-3 text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+        { "opacity-50": props.disabled, "cursor-not-allowed": props.disabled },
         props.className
       )}
     ></button>
   );
-}
-
-function useTimer() {
-  const [seconds, setSeconds] = useState(0);
-
-  const [on, setOn] = useState(false);
-  const start = () => setOn(true);
-  const stop = () => setOn(false);
-  const clear = () => setSeconds(0);
-
-  useEffect(() => {
-    if (on) {
-      const timer = setInterval(() => setSeconds((val) => val + 1), 1000);
-      return () => clearInterval(timer);
-    }
-  }, [on]);
-
-  return {
-    seconds,
-    on,
-    start,
-    stop,
-    clear,
-  };
 }
