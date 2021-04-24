@@ -10,6 +10,7 @@ type Props = {
 type FormValues = {
   category: string;
   title: string;
+  estimatedMinutes: string;
 };
 
 export default function TaskForm({ onSubmit }: Props) {
@@ -24,14 +25,17 @@ export default function TaskForm({ onSubmit }: Props) {
         reset();
       }}
     >
-      <div className="w-48">
+      <div className="w-32">
         <InputText placeholder="category" {...register("category")} />
       </div>
       <div className="flex-1">
         <InputText placeholder="title" {...register("title")} />
       </div>
-      <SWhiteButton className="col-span-2" type="submit">
-        Submit
+      <div className="w-32">
+        <InputText placeholder="minutes" {...register("estimatedMinutes")} />
+      </div>
+      <SWhiteButton className="w-16 justify-center" type="submit">
+        ADD
       </SWhiteButton>
     </form>
   );

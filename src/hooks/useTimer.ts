@@ -3,29 +3,29 @@ import { zip } from "ramda";
 import { useMemo, useState } from "react";
 
 export function useTimer({
-  pastRecords = { startedTimeRecords: [], stoppedTimeRecords: [] },
+  pastRecords = { startTimeRecords: [], stopTimeRecords: [] },
 }: {
-  pastRecords?: { startedTimeRecords: Date[]; stoppedTimeRecords: Date[] };
+  pastRecords?: { startTimeRecords: Date[]; stopTimeRecords: Date[] };
 }) {
   const [running, setRunning] = useState(false);
 
-  const [startedTimeRecords, setStartedTimeRecords] = useState<Date[]>(
-    pastRecords.startedTimeRecords
+  const [startTimeRecords, setstartTimeRecords] = useState<Date[]>(
+    pastRecords.startTimeRecords
   );
-  const [stoppedTimeRecords, setStoppedTimeRecords] = useState<Date[]>(
-    pastRecords.stoppedTimeRecords
+  const [stopTimeRecords, setstopTimeRecords] = useState<Date[]>(
+    pastRecords.stopTimeRecords
   );
 
   const previousTotalSeconds = useMemo(
     () =>
       Math.floor(
-        zip(startedTimeRecords, stoppedTimeRecords).reduce(
-          (total, [startedTime, stoppedTime]) =>
-            total + differenceInMilliseconds(stoppedTime, startedTime),
+        zip(startTimeRecords, stopTimeRecords).reduce(
+          (total, [startTime, stopTime]) =>
+            total + differenceInMilliseconds(stopTime, startTime),
           0
         ) / 1000
       ),
-    [startedTimeRecords, stoppedTimeRecords]
+    [startTimeRecords, stopTimeRecords]
   );
 
   const {
@@ -38,18 +38,18 @@ export function useTimer({
 
   const start = () => {
     setRunning(true);
-    setStartedTimeRecords((val) => [...val, new Date()]);
+    setstartTimeRecords((val) => [...val, new Date()]);
     startCouting();
   };
   const stop = () => {
     setRunning(false);
-    setStoppedTimeRecords((val) => [...val, new Date()]);
+    setstopTimeRecords((val) => [...val, new Date()]);
     clearCouting();
   };
   const clear = () => {
     setRunning(false);
-    setStartedTimeRecords([]);
-    setStoppedTimeRecords([]);
+    setstartTimeRecords([]);
+    setstopTimeRecords([]);
   };
 
   return {
@@ -59,15 +59,15 @@ export function useTimer({
     running,
     totalSeconds,
     countingSeconds,
-    startedTimeRecords,
-    stoppedTimeRecords,
+    startTimeRecords,
+    stopTimeRecords,
   };
 }
 
 function useCountingSeconds() {
   const [running, setRunning] = useState(false);
   const [seconds, setSeconds] = useState(0);
-  const [startedTime, setStartedTime] = useState<Date>();
+  const [startTime, setstartTime] = useState<Date>();
   const [coutingInstance, setCoutingInstance] = useState<NodeJS.Timeout>();
   const [
     adjustmentInstance,
@@ -76,13 +76,13 @@ function useCountingSeconds() {
 
   const start = () => {
     if (running) return;
-    const _startedTime = new Date();
+    const _startTime = new Date();
     setRunning(true);
-    setStartedTime(_startedTime);
+    setstartTime(_startTime);
     setCoutingInstance(setInterval(() => setSeconds((val) => val + 1), 1000));
     setAdjustmentInstance(
       setInterval(
-        () => setSeconds(differenceInSeconds(new Date(), _startedTime)),
+        () => setSeconds(differenceInSeconds(new Date(), _startTime)),
         60 * 1000
       )
     );
@@ -91,8 +91,8 @@ function useCountingSeconds() {
   const clear = () => {
     if (!running) return 0;
     setRunning(false);
-    const totalSeconds = differenceInSeconds(new Date(), startedTime as Date);
-    setStartedTime(undefined);
+    const totalSeconds = differenceInSeconds(new Date(), startTime as Date);
+    setstartTime(undefined);
     clearInterval(coutingInstance as NodeJS.Timeout);
     setCoutingInstance(undefined);
     clearInterval(adjustmentInstance as NodeJS.Timeout);
