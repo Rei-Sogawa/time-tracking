@@ -7,7 +7,7 @@ type Props = {
   onSubmit: SubmitHandler<FormValues>;
 };
 
-type FormValues = {
+export type FormValues = {
   category: string;
   title: string;
   estimatedMinutes: string;

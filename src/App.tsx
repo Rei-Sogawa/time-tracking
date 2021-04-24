@@ -1,28 +1,34 @@
-import { range } from "ramda";
-import { useMemo } from "react";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import TaskForm from "./components/TaskForm";
+import TaskForm, { FormValues } from "./components/TaskForm";
 import TaskItem from "./components/TaskItem";
+import { db } from "./firebaseApp";
 import * as Task from "./models/task";
 
 export default function App() {
-  const tasks = useMemo(
-    () =>
-      range(0, 3).map((_) => ({
-        ...Task.getDefaultData(),
-        title: "腹筋ローラー",
-        category: "筋トレ",
-      })),
-    []
-  );
+  const [tasks] = useCollectionData<Task.Data>(db.collection("tasks"), {
+    transform: Task.fromFirestore,
+    snapshotOptions: { serverTimestamps: "estimate" },
+  });
+
+  const onSubmit = (values: FormValues) => {
+    const { title, category, estimatedMinutes } = values;
+    const newTask: Task.FirestoreData = {
+      ...Task.getDefaultFirestoreData(),
+      title,
+      category,
+      estimatedSeconds: Number(estimatedMinutes),
+    };
+    db.collection("tasks").add(newTask);
+  };
 
   return (
     <div className="h-screen bg-white">
       <div className="max-w-screen-lg mx-auto py-5">
         <div className="space-y-3">
-          <TaskForm onSubmit={(values) => console.log(values)} />
+          <TaskForm onSubmit={onSubmit} />
           <div className="space-y-1.5">
-            {tasks.map((task, index) =>
+            {tasks?.map((task, index) =>
               index === 0 ? (
                 <TaskItem task={task} />
               ) : (
