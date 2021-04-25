@@ -7,12 +7,13 @@ import { InputNumber, InputText } from "../basics/input";
 
 type Props = {
   onSubmit: SubmitHandler<FormValues>;
+  defaultValues?: FormValues;
 };
 
 export type FormValues = {
   category: string;
   title: string;
-  estimatedMinutes: string;
+  estimatedMinutes: number;
 };
 
 const schema = yup.object().shape({
@@ -26,30 +27,34 @@ const schema = yup.object().shape({
     ),
 });
 
-export default function TaskForm({ onSubmit }: Props) {
+export default function TaskForm({ onSubmit, defaultValues }: Props) {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({ resolver: yupResolver(schema), mode: "onChange" });
+  } = useForm<FormValues>({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+    defaultValues,
+  });
 
   return (
     <form
-      className="px-3 flex space-x-3"
+      className="px-3 flex space-x-3 h-10"
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit(onSubmit)(e);
         reset();
       }}
     >
-      <div className="w-32">
+      <div className="w-32 flex">
         <InputText placeholder="category" {...register("category")} />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 flex">
         <InputText placeholder="title" {...register("title")} />
       </div>
-      <div className="w-32">
+      <div className="w-32 flex">
         <InputNumber
           placeholder="minutes"
           {...register("estimatedMinutes")}

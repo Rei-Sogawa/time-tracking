@@ -49,7 +49,7 @@ export default function TaskTable({ tasks }: Props) {
                       {task.title}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {task.estimatedSeconds}
+                      {task.estimatedMinutes}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <a

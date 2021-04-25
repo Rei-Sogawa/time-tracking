@@ -23,7 +23,7 @@ export default function App() {
       ...Task.getDefaultFirestoreData(),
       title,
       category,
-      estimatedSeconds: Number(estimatedMinutes),
+      estimatedMinutes,
     };
     db.collection("tasks").add(newTask);
   };

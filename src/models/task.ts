@@ -1,3 +1,5 @@
+import { omit } from "ramda";
+
 import {
   DocumentReference,
   fromDate,
@@ -9,7 +11,7 @@ export type Data = {
   title: string;
   body: string;
   category: string;
-  estimatedSeconds: number;
+  estimatedMinutes: number;
   requiredSeconds: number;
   startTimeRecords: Date[];
   stopTimeRecords: Date[];
@@ -53,7 +55,7 @@ export const getDefaultData: () => Data = () => ({
   title: "",
   body: "",
   category: "",
-  estimatedSeconds: 0,
+  estimatedMinutes: 0,
   requiredSeconds: 0,
   startTimeRecords: [],
   stopTimeRecords: [],
@@ -67,3 +69,9 @@ export const getDefaultFirestoreData: () => FirestoreData = () => ({
 });
 
 export const isComplete = (data: Data) => !!data.completedAt;
+
+export const omitIdAndRefFromData: (
+  dataWithIdAndRef: DataWithIdAndRef
+) => Data = (dataWithIdAndRef) => {
+  return omit(["id", "ref"], dataWithIdAndRef);
+};
