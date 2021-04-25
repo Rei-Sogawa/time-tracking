@@ -1,4 +1,9 @@
-import { fromDate, serverTimestamp, Timestamp } from '../firebaseApp';
+import {
+  DocumentReference,
+  fromDate,
+  serverTimestamp,
+  Timestamp,
+} from "../firebaseApp";
 
 export type Data = {
   title: string;
@@ -12,9 +17,11 @@ export type Data = {
   completedAt: Date | null;
 };
 
+export type DataWithIdAndRef = Data & { id: string; ref: DocumentReference };
+
 export type FirestoreData = Omit<
   Data,
-  'startTimeRecords' | 'stopTimeRecords' | 'createdAt' | 'completedAt'
+  "startTimeRecords" | "stopTimeRecords" | "createdAt" | "completedAt"
 > & {
   startTimeRecords: Timestamp[];
   stopTimeRecords: Timestamp[];
@@ -43,9 +50,9 @@ export const fromFirestore: (firestoreData: FirestoreData) => Data = (
 });
 
 export const getDefaultData: () => Data = () => ({
-  title: '',
-  body: '',
-  category: '',
+  title: "",
+  body: "",
+  category: "",
   estimatedSeconds: 0,
   requiredSeconds: 0,
   startTimeRecords: [],

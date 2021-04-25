@@ -1,18 +1,19 @@
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import classNames from "classnames";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import TaskForm, { FormValues } from './components/TaskForm';
-import TaskItem from './components/TaskItem';
-import { db } from './firebaseApp';
-import * as Task from './models/task';
+import TaskForm, { FormValues } from "./components/TaskForm";
+import TaskItem from "./components/TaskItem";
+import { db } from "./firebaseApp";
+import * as Task from "./models/task";
 
 export default function App() {
-  const [tasks] = useCollectionData<Task.Data, 'id', 'ref'>(
-    db.collection('tasks'),
+  const [tasks] = useCollectionData<Task.Data, "id", "ref">(
+    db.collection("tasks").orderBy("createdAt", "desc"),
     {
       transform: Task.fromFirestore,
-      snapshotOptions: { serverTimestamps: 'estimate' },
-      idField: 'id',
-      refField: 'ref',
+      snapshotOptions: { serverTimestamps: "estimate" },
+      idField: "id",
+      refField: "ref",
     }
   );
 
@@ -24,8 +25,7 @@ export default function App() {
       category,
       estimatedSeconds: Number(estimatedMinutes),
     };
-    debugger;
-    db.collection('tasks').add(newTask);
+    db.collection("tasks").add(newTask);
   };
 
   return (
@@ -33,15 +33,22 @@ export default function App() {
       <div className="max-w-screen-lg mx-auto py-5">
         <div className="space-y-3">
           <TaskForm onSubmit={onSubmit} />
-          <div className="space-y-1.5">
+          <ul className="divide-y divide-gray-200">
             {tasks
               ?.filter((task) => !Task.isComplete(task))
-              .map((task) => (
-                <div key={task.id}>
+              .map((task, idx) => (
+                <li
+                  key={task.id}
+                  className={classNames(
+                    "py-4",
+                    { "bg-white": idx % 2 },
+                    { "bg-gray-50": !(idx % 2) }
+                  )}
+                >
                   <TaskItem task={task} />
-                </div>
+                </li>
               ))}
-          </div>
+          </ul>
         </div>
       </div>
     </div>
