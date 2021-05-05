@@ -128,26 +128,28 @@ const taskFormSchema = yup.object().shape({
 });
 
 const TaskForm = ({ defaultValues }: { defaultValues?: TaskFormValues }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: yupResolver(taskFormSchema), defaultValues });
+  const { register, handleSubmit, reset } = useForm({
+    resolver: yupResolver(taskFormSchema),
+    defaultValues,
+  });
+
+  const onSubmit = (data: TaskFormValues) => {
+    console.log(data);
+    reset();
+  };
 
   return (
-    <form onSubmit={handleSubmit((data) => console.log(data))}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex space-x-3">
         <div className="w-32">
           <Field {...register('category')} placeholder="category" />
         </div>
         <div className="flex-1">
-          <Field
-            {...register('title')}
-            error={errors.title?.message}
-            placeholder="title"
-          />
+          <Field {...register('title')} placeholder="title" />
         </div>
       </div>
+      {/* react-hook-form は type="submit" の button か input が form 内にないと enter で submit できない */}
+      <button type="submit" />
     </form>
   );
 };
