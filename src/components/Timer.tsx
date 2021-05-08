@@ -2,7 +2,7 @@ import differenceInMilliseconds from 'date-fns/esm/fp/differenceInMilliseconds/i
 import { zip } from 'ramda';
 import { useMemo } from 'react';
 import { useTimer } from '../hooks/useTimer';
-import Button from '../basics/button';
+import Button from '../basics/Button';
 
 type Props = {
   startTimes: Date[];
@@ -62,10 +62,20 @@ const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
       </div>
       <div className="flex justify-center">
         <div className="flex space-x-3">
-          <Button onClick={handleClickStart} disabled={!canStart} size="sm">
+          <Button
+            onClick={handleClickStart}
+            disabled={!canStart}
+            size="xsm"
+            color="white"
+          >
             START
           </Button>
-          <Button onClick={handleClickStop} disabled={!canStop} size="sm">
+          <Button
+            onClick={handleClickStop}
+            disabled={!canStop}
+            size="xsm"
+            color="white"
+          >
             STOP
           </Button>
         </div>
