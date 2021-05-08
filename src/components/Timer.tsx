@@ -57,15 +57,15 @@ const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
 
   return (
     <div className="space-y-3">
-      <div className="flex justify-center text-5xl font-mono">
+      <div className="flex justify-center font-mono">
         {displayedHours}:{displayedMinutes}:{displayedSeconds}
       </div>
       <div className="flex justify-center">
         <div className="flex space-x-3">
-          <Button onClick={handleClickStart} disabled={!canStart}>
+          <Button onClick={handleClickStart} disabled={!canStart} size="sm">
             START
           </Button>
-          <Button onClick={handleClickStop} disabled={!canStop}>
+          <Button onClick={handleClickStop} disabled={!canStop} size="sm">
             STOP
           </Button>
         </div>
