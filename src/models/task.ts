@@ -1,6 +1,5 @@
 export type Data = {
-  title: string;
-  content: string;
+  description: string;
   completed: boolean;
   requiredSeconds: number;
   estimatedSeconds: number;
