@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import Field from '../basics/field';
+import InputTextField from '../basics/field/InputTextField';
 
 type Props = {
   defaultValues?: TaskFormValues;
@@ -34,7 +34,7 @@ const TaskForm = ({ defaultValues, handleSubmit }: Props) => {
 
   return (
     <form onSubmit={hookFormHandleSubmit(onSubmit)}>
-      <Field
+      <InputTextField
         {...register('description')}
         placeholder="add new task"
         error={errors.description?.message}

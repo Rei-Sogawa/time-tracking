@@ -6,3 +6,12 @@ export type Data = {
   startTimes: Data[];
   stopTimes: Data[];
 };
+
+export const getDefaultData: () => Data = () => ({
+  description: '',
+  completed: false,
+  requiredSeconds: 0,
+  estimatedSeconds: 0,
+  startTimes: [],
+  stopTimes: [],
+});
