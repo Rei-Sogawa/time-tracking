@@ -2,7 +2,7 @@ import * as Task from '../models/task';
 import ListGroup from '../basics/ListGroup';
 import { ClockIcon } from '@heroicons/react/outline';
 import { useState } from 'react';
-import Timer from '../components/Timer';
+import StopWatch from './StopWatch';
 import { useToggle } from 'react-use';
 import classNames from 'classnames';
 
@@ -11,13 +11,12 @@ type Props = {
 };
 
 const TaskItem = ({ task }: Props) => {
-  const [showsTimer, toggleShowsTimer] = useToggle(false);
+  const [showsStopWatch, toggleShowsStopWatch] = useToggle(false);
   const [isTimerRunning, toggleIsTimerRunning] = useToggle(false);
 
-  const canToggleTimer = !isTimerRunning;
-  const handleClickTimer = () => {
-    if (!canToggleTimer) return;
-    toggleShowsTimer();
+  const handleClickShowStopWatch = () => {
+    if (isTimerRunning) return;
+    toggleShowsStopWatch();
   };
 
   const [startTimes, setStartTimes] = useState<Date[]>([]);
@@ -43,17 +42,17 @@ const TaskItem = ({ task }: Props) => {
           <button
             className={classNames(
               'focus:outline-none',
-              !canToggleTimer && 'cursor-not-allowed opacity-50'
+              isTimerRunning && 'cursor-not-allowed opacity-50'
             )}
-            disabled={!canToggleTimer}
+            disabled={isTimerRunning}
           >
-            <ClockIcon className="h-6 w-6" onClick={handleClickTimer} />
+            <ClockIcon className="h-6 w-6" onClick={handleClickShowStopWatch} />
           </button>
         </div>
-        {showsTimer && (
+        {showsStopWatch && (
           <>
             <hr />
-            <Timer
+            <StopWatch
               startTimes={startTimes}
               stopTimes={stopTimes}
               handleStart={handleStart}

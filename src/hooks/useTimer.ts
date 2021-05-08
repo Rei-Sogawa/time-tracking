@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useInterval } from 'react-use';
 import { differenceInSeconds } from 'date-fns';
 
-const useTimer = () => {
+const useFinishWatch = () => {
   const [startTime, setStartTime] = useState<Date>();
   const [finishTime, setFinishTime] = useState<Date>();
   const [seconds, setSeconds] = useState(0);
@@ -35,4 +35,4 @@ const useTimer = () => {
   return { isRunning, seconds, start, finish, clear };
 };
 
-export { useTimer };
+export { useFinishWatch };

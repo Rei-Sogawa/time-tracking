@@ -8,7 +8,7 @@ type Props = {
   handleSubmit: (values: TaskFormValues) => void;
 };
 
-type TaskFormValues = {
+export type TaskFormValues = {
   description: string;
 };
 

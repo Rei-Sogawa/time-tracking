@@ -1,7 +1,7 @@
 import differenceInMilliseconds from 'date-fns/esm/fp/differenceInMilliseconds/index.js';
 import { zip } from 'ramda';
 import { useMemo } from 'react';
-import { useTimer } from '../hooks/useTimer';
+import { useFinishWatch } from '../hooks/useTimer';
 import Button from '../basics/Button';
 
 type Props = {
@@ -11,14 +11,19 @@ type Props = {
   handleStop: () => void;
 };
 
-const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
+const StopWatch = ({
+  startTimes,
+  stopTimes,
+  handleStart,
+  handleStop,
+}: Props) => {
   const {
     isRunning,
     seconds: runningSeconds,
     start,
     finish,
     clear,
-  } = useTimer();
+  } = useFinishWatch();
 
   const secondsSoFar = useMemo(() => {
     const milliseconds = zip(startTimes, stopTimes).reduce(
@@ -39,17 +44,14 @@ const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
   const displayedMinutes = String(minutes).padStart(2, '0');
   const displayedSeconds = String(seconds).padStart(2, '0');
 
-  const canStart = !isRunning;
-  const canStop = isRunning;
-
   const handleClickStart = () => {
-    if (!canStart) return;
+    if (isRunning) return;
     start();
     handleStart();
   };
 
   const handleClickStop = () => {
-    if (!canStop) return;
+    if (!isRunning) return;
     finish();
     clear();
     handleStop();
@@ -64,7 +66,7 @@ const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
         <div className="flex space-x-3">
           <Button
             onClick={handleClickStart}
-            disabled={!canStart}
+            disabled={isRunning}
             size="xsm"
             color="white"
           >
@@ -72,7 +74,7 @@ const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
           </Button>
           <Button
             onClick={handleClickStop}
-            disabled={!canStop}
+            disabled={!isRunning}
             size="xsm"
             color="white"
           >
@@ -84,4 +86,4 @@ const Timer = ({ startTimes, stopTimes, handleStart, handleStop }: Props) => {
   );
 };
 
-export default Timer;
+export default StopWatch;

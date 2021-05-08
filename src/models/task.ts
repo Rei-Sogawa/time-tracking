@@ -1,17 +1,22 @@
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+
 export type Data = {
   description: string;
-  completed: boolean;
+  completedAt: firebase.firestore.Timestamp | null;
   requiredSeconds: number;
   estimatedSeconds: number;
-  startTimes: Data[];
-  stopTimes: Data[];
+  startTimes: firebase.firestore.Timestamp[];
+  stopTimes: firebase.firestore.Timestamp[];
+  createdAt: firebase.firestore.Timestamp;
 };
 
-export const getDefaultData: () => Data = () => ({
+export const getDefaultData = () => ({
   description: '',
-  completed: false,
+  completedAt: null,
   requiredSeconds: 0,
   estimatedSeconds: 0,
   startTimes: [],
   stopTimes: [],
+  createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 });
