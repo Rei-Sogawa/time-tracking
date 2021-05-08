@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import Field from './basics/field';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import Timer from './components/Timer';
+import TaskForm from './components/TaskForm';
 
 const App = () => {
   const [startTimes, setStartTimes] = useState<Date[]>([]);
@@ -21,47 +18,14 @@ const App = () => {
           handleStart={handleStart}
           handleStop={handleStop}
         />
-        <TaskForm />
+        <TaskForm
+          handleSubmit={(values) => {
+            console.log(values);
+          }}
+        />
       </div>
     </div>
   );
 };
 
 export default App;
-
-type TaskFormValues = {
-  description?: string;
-  category?: string;
-};
-
-const taskFormSchema = yup.object().shape({
-  description: yup.string().nullable(),
-  category: yup.string().nullable(),
-});
-
-const TaskForm = ({ defaultValues }: { defaultValues?: TaskFormValues }) => {
-  const { register, handleSubmit, reset } = useForm({
-    resolver: yupResolver(taskFormSchema),
-    defaultValues,
-  });
-
-  const onSubmit = (data: TaskFormValues) => {
-    console.log(data);
-    reset();
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex space-x-3">
-        <div className="w-32">
-          <Field {...register('category')} placeholder="category" />
-        </div>
-        <div className="flex-1">
-          <Field {...register('description')} placeholder="description" />
-        </div>
-      </div>
-      {/* react-hook-form は type="submit" の button か input が form 内にないと enter で submit できない */}
-      <button type="submit" />
-    </form>
-  );
-};
