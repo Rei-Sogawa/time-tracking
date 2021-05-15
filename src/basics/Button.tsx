@@ -1,5 +1,5 @@
-import { ButtonHTMLAttributes } from 'react';
 import classNames from 'classnames';
+import { ButtonHTMLAttributes } from 'react';
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: 'xsm' | 'sm' | 'md' | 'lg' | 'xlg';

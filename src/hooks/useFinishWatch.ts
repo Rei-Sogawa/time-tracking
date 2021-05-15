@@ -1,6 +1,6 @@
+import { differenceInSeconds } from 'date-fns';
 import { useState } from 'react';
 import { useInterval } from 'react-use';
-import { differenceInSeconds } from 'date-fns';
 
 const useFinishWatch = () => {
   const [startTime, setStartTime] = useState<Date>();

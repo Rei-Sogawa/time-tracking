@@ -1,7 +1,9 @@
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+
+import ListGroup from '../basics/ListGroup';
 import { tasksRef } from '../firebaseApp';
 import { IdAndRef, Task } from '../models';
-import ListGroup from '../basics/ListGroup';
+import TaskItemContainer from './TaskItem';
 
 const TaskListContainer = () => {
   const [tasks] = useCollectionData<Task.Data & IdAndRef>(tasksRef, {
@@ -15,7 +17,7 @@ const TaskListPresenter = ({ tasks }: { tasks: (Task.Data & IdAndRef)[] }) => {
   return (
     <ListGroup>
       {tasks.map((task) => (
-        <ListGroup.Item>{task.description}</ListGroup.Item>
+        <TaskItemContainer key={task.id} task={task} />
       ))}
     </ListGroup>
   );

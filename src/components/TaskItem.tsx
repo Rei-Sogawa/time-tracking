@@ -1,77 +1,31 @@
-import ListGroup from '../basics/ListGroup';
-import { ClockIcon, TrashIcon } from '@heroicons/react/outline';
-import { useState } from 'react';
-import StopWatch from './StopWatch';
-import { useToggle } from 'react-use';
-import classNames from 'classnames';
-import { Task, IdAndRef } from '../models';
+import { ClockIcon,TrashIcon } from '@heroicons/react/outline';
 
-type Props = {
-  task: Task.Data & IdAndRef;
+import ListGroup from '../basics/ListGroup';
+import { IdAndRef, Task } from '../models';
+
+const TaskItemContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
+  const handleRemove = () => task.ref.delete();
+  return <TaskItemPresenter task={task} onRemove={handleRemove} />;
 };
 
-const TaskItem = ({ task }: Props) => {
-  const [showStopWatch, toggleShowStopWatch] = useToggle(false);
-  const [isTimerRunning, toggleIsTimerRunning] = useToggle(false);
-
-  const handleClickShowStopWatch = () => {
-    if (isTimerRunning) return;
-    toggleShowStopWatch();
-  };
-
-  const [startTimes, setStartTimes] = useState<Date[]>([]);
-  const [stopTimes, setStopTimes] = useState<Date[]>([]);
-
-  const handleStart = () => {
-    setStartTimes((val) => [...val, new Date()]);
-    toggleIsTimerRunning();
-  };
-  const handleStop = () => {
-    setStopTimes((val) => [...val, new Date()]);
-    toggleIsTimerRunning();
-  };
-
+const TaskItemPresenter = ({
+  task,
+  onRemove,
+}: {
+  task: Task.Data & IdAndRef;
+  onRemove: () => void;
+}) => {
   return (
     <ListGroup.Item>
-      <div className="flex-col space-y-3">
-        <div className="flex justify-between">
-          <div className="flex items-center space-x-3">
-            <input type="checkbox" className="form-checkbox" />
-            <div>{task.description}</div>
-          </div>
-          <button
-            className={classNames(
-              'focus:outline-none',
-              isTimerRunning && 'cursor-not-allowed opacity-50',
-            )}
-            disabled={isTimerRunning}
-          >
-            <div className="flex space-x-1">
-              <ClockIcon
-                className="h-6 w-6"
-                onClick={handleClickShowStopWatch}
-              />
-              <TrashIcon
-                className="h-6 w-6"
-                onClick={() => task.ref.delete()}
-              />
-            </div>
-          </button>
+      <div className="flex justify-between">
+        <div>{task.description}</div>
+        <div className="flex space-x-1">
+          <ClockIcon className="h-6 w-6 cursor-pointer" />
+          <TrashIcon onClick={onRemove} className="h-6 w-6 cursor-pointer" />
         </div>
-        {showStopWatch && (
-          <>
-            <hr />
-            <StopWatch
-              startTimes={startTimes}
-              stopTimes={stopTimes}
-              handleStart={handleStart}
-              handleStop={handleStop}
-            />
-          </>
-        )}
       </div>
     </ListGroup.Item>
   );
 };
 
-export default TaskItem;
+export default TaskItemContainer;
