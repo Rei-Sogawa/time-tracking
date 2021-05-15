@@ -1,4 +1,5 @@
 import { sortBy } from 'ramda';
+import { useMemo } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 import ListGroup from '../basics/ListGroup';
@@ -12,9 +13,10 @@ const TaskListContainer = () => {
     refField: 'ref',
     snapshotOptions: { serverTimestamps: 'estimate' },
   });
-  const sortedTasks = tasks
-    ? sortBy((task) => task.createdAt.toDate(), tasks)
-    : [];
+  const sortedTasks = useMemo(
+    () => (tasks ? sortBy((task) => task.createdAt.toDate(), tasks) : []),
+    [tasks],
+  );
   return <TaskListPresenter tasks={sortedTasks} />;
 };
 
