@@ -13,7 +13,7 @@ const Button = ({ size, color, ...rest }: Props) => (
       size === 'xsm' && 'px-2.5 py-1.5 text-xs',
       color === 'white' &&
         'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
-      rest.disabled && 'cursor-not-allowed opacity-50'
+      rest.disabled && 'cursor-not-allowed opacity-50',
     )}
     {...rest}
   >

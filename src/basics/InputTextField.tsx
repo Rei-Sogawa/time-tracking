@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { ForwardedRef,forwardRef, InputHTMLAttributes } from 'react';
+import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react';
 
 type InputTextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
@@ -17,7 +17,7 @@ const InputTextField = forwardRef(
             error
               ? 'text-red-900 placeholder-red-300 border-red-300 focus:ring-red-500 focus:border-red-500'
               : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500',
-            rest.disabled && 'cursor-not-allowed opacity-50'
+            rest.disabled && 'cursor-not-allowed opacity-50',
           )}
           ref={ref}
           {...rest}
@@ -25,7 +25,7 @@ const InputTextField = forwardRef(
         {error && <p className="mt-1 ml-1 text-sm text-red-500">{error}</p>}
       </>
     );
-  }
+  },
 );
 
 export default InputTextField;
