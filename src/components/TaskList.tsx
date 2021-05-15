@@ -14,7 +14,7 @@ const TaskListContainer = () => {
     snapshotOptions: { serverTimestamps: 'estimate' },
   });
   const sortedTasks = useMemo(
-    () => (tasks ? sortBy((task) => task.createdAt.toDate(), tasks) : []),
+    () => (tasks ? sortBy((task) => -task.createdAt.toDate(), tasks) : []),
     [tasks],
   );
   return <TaskListPresenter tasks={sortedTasks} />;
