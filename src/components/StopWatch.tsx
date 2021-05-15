@@ -6,7 +6,7 @@ import { zip } from 'ramda';
 import { useCallback, useContext, useEffect } from 'react';
 
 import Button from '../basics/Button';
-import { Context as stopWatchContext } from '../contexts/stopwatch';
+import { Context as stopWatchContext } from '../contexts/stopWatch';
 import { useStopWatch } from '../hooks/useStopWatch';
 import { IdAndRef, Task } from '../models';
 import { convertSeconds } from '../utils/convertSeconds';

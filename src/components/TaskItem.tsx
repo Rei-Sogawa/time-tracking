@@ -2,7 +2,7 @@ import { ClockIcon, TrashIcon } from '@heroicons/react/outline';
 import { useContext } from 'react';
 import { useToggle } from 'react-use';
 
-import { Context as stopWatchContext } from '../contexts/stopwatch';
+import { Context as stopWatchContext } from '../contexts/stopWatch';
 import { IdAndRef, Task } from '../models';
 import StopWatch from './StopWatch';
 

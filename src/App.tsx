@@ -1,6 +1,6 @@
 import TaskForm, { TaskFormValues } from './components/TaskForm';
 import TaskList from './components/TaskList';
-import { Provider as StopWatchProvider } from './contexts/stopwatch';
+import { Provider as StopWatchProvider } from './contexts/stopWatch';
 import { tasksRef } from './firebaseApp';
 import { Task } from './models';
 
