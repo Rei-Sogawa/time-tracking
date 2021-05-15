@@ -1,22 +1,22 @@
-import * as Task from '../models/task';
 import ListGroup from '../basics/ListGroup';
-import { ClockIcon } from '@heroicons/react/outline';
+import { ClockIcon, TrashIcon } from '@heroicons/react/outline';
 import { useState } from 'react';
 import StopWatch from './StopWatch';
 import { useToggle } from 'react-use';
 import classNames from 'classnames';
+import { Task, IdAndRef } from '../models';
 
 type Props = {
-  task: Task.Data;
+  task: Task.Data & IdAndRef;
 };
 
 const TaskItem = ({ task }: Props) => {
-  const [showsStopWatch, toggleShowsStopWatch] = useToggle(false);
+  const [showStopWatch, toggleShowStopWatch] = useToggle(false);
   const [isTimerRunning, toggleIsTimerRunning] = useToggle(false);
 
   const handleClickShowStopWatch = () => {
     if (isTimerRunning) return;
-    toggleShowsStopWatch();
+    toggleShowStopWatch();
   };
 
   const [startTimes, setStartTimes] = useState<Date[]>([]);
@@ -42,14 +42,23 @@ const TaskItem = ({ task }: Props) => {
           <button
             className={classNames(
               'focus:outline-none',
-              isTimerRunning && 'cursor-not-allowed opacity-50'
+              isTimerRunning && 'cursor-not-allowed opacity-50',
             )}
             disabled={isTimerRunning}
           >
-            <ClockIcon className="h-6 w-6" onClick={handleClickShowStopWatch} />
+            <div className="flex space-x-1">
+              <ClockIcon
+                className="h-6 w-6"
+                onClick={handleClickShowStopWatch}
+              />
+              <TrashIcon
+                className="h-6 w-6"
+                onClick={() => task.ref.delete()}
+              />
+            </div>
           </button>
         </div>
-        {showsStopWatch && (
+        {showStopWatch && (
           <>
             <hr />
             <StopWatch
