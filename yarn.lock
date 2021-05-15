@@ -10781,10 +10781,10 @@ react-simple-code-editor@^0.10.0:
   resolved "https://registry.yarnpkg.com/react-simple-code-editor/-/react-simple-code-editor-0.10.0.tgz#73e7ac550a928069715482aeb33ccba36efe2373"
   integrity sha512-bL5W5mAxSW6+cLwqqVWY47Silqgy2DKDTR4hDBrLrUqC5BXc29YVx17l2IZk5v36VcDEq1Bszu2oHm1qBwKqBA==
 
-react-timer-hook@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/react-timer-hook/-/react-timer-hook-3.0.2.tgz#7cf0c7d2a54eb7a0b8021e8e607af5e382d5c634"
-  integrity sha512-FW06yAkgJMBHUk658F09nk5lYD/24+O3nfqixHz6WzdEk+I8KVyvfYYUZVlxj6GUq9Dqq0OA9jz13AyQblrZmQ==
+react-timer-hook@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-timer-hook/-/react-timer-hook-3.0.3.tgz#b42bab3bf49322c378ad19587d14906f8af57ce8"
+  integrity sha512-2JdFvAKNi/7sW5NMrPPd06Yk4ky6W5OUmhsFInIKyqX7le3LdlN8aG2QTfX5nojkmcAXFmXhWI3EJSHQETg8qw==
 
 react-universal-interface@^0.6.2:
   version "0.6.2"

@@ -1,72 +1,98 @@
-import differenceInMilliseconds from 'date-fns/esm/fp/differenceInMilliseconds/index.js';
+import 'firebase/firestore';
+
+import { differenceInMilliseconds } from 'date-fns';
+import firebase from 'firebase/app';
 import { zip } from 'ramda';
-import { useMemo } from 'react';
 
 import Button from '../basics/Button';
-import { useFinishWatch } from '../hooks/useFinishWatch';
+import { useStopWatch } from '../hooks/useStopWatch';
+import { IdAndRef, Task } from '../models';
+import { convertSeconds } from '../utils/convertSeconds';
 
-type Props = {
-  startTimes: Date[];
-  stopTimes: Date[];
-  handleStart: () => void;
-  handleStop: () => void;
+const StopWatchContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
+  const offsetMilliseconds = zip(task.startTimes, task.stopTimes).reduce(
+    (sum, [startTime, stopTime]) =>
+      sum + differenceInMilliseconds(stopTime.toDate(), startTime.toDate()),
+    0,
+  );
+  const offsetSeconds = Math.floor(offsetMilliseconds / 1000);
+  const handleStart = () =>
+    task.ref.update({
+      startTimes: firebase.firestore.FieldValue.arrayUnion(
+        firebase.firestore.Timestamp.now(),
+      ),
+    });
+  const handleStop = () =>
+    task.ref.update({
+      stopTimes: firebase.firestore.FieldValue.arrayUnion(
+        firebase.firestore.Timestamp.now(),
+      ),
+    });
+  const handleClear = () =>
+    task.ref.update({
+      startTimes: [],
+      stopTimes: [],
+    });
+
+  return (
+    <StopWatchPresenter
+      offsetSeconds={offsetSeconds}
+      onStart={handleStart}
+      onStop={handleStop}
+      onClear={handleClear}
+    />
+  );
 };
 
-const StopWatch = ({
-  startTimes,
-  stopTimes,
-  handleStart,
-  handleStop,
-}: Props) => {
+const StopWatchPresenter = ({
+  offsetSeconds,
+  onStart,
+  onStop,
+  onClear,
+}: {
+  offsetSeconds: number;
+  onStart: () => void;
+  onStop: () => void;
+  onClear: () => void;
+}) => {
   const {
+    seconds: totalSeconds,
     isRunning,
-    seconds: runningSeconds,
     start,
-    finish,
+    stop,
     clear,
-  } = useFinishWatch();
+  } = useStopWatch({
+    offsetSeconds,
+  });
 
-  const secondsSoFar = useMemo(() => {
-    const milliseconds = zip(startTimes, stopTimes).reduce(
-      (total, [startTime, stopTime]) =>
-        total + differenceInMilliseconds(startTime, stopTime),
-      0
-    );
-    return Math.floor(milliseconds / 1000);
-  }, [startTimes, stopTimes]);
+  const { seconds, minutes, hours } = convertSeconds(totalSeconds);
 
-  const totalSeconds = secondsSoFar + runningSeconds;
-
-  const hours = Math.floor(totalSeconds / 60 / 60);
-  const minutes = Math.floor(totalSeconds / 60) - hours * 60;
-  const seconds = Math.floor(totalSeconds % 60);
-
-  const displayedHours = String(hours).padStart(2, '0');
-  const displayedMinutes = String(minutes).padStart(2, '0');
   const displayedSeconds = String(seconds).padStart(2, '0');
+  const displayedMinutes = String(minutes).padStart(2, '0');
+  const displayedHours = String(hours).padStart(2, '0');
 
-  const handleClickStart = () => {
-    if (isRunning) return;
+  const handleStart = () => {
     start();
-    handleStart();
+    onStart();
   };
-
-  const handleClickStop = () => {
-    if (!isRunning) return;
-    finish();
+  const handleStop = () => {
+    stop();
+    onStop();
+  };
+  const handleClear = () => {
     clear();
-    handleStop();
+    onClear();
   };
 
   return (
     <div className="space-y-3">
-      <div className="flex justify-center font-mono">
+      <div className="text-center font-mono text-3xl">
         {displayedHours}:{displayedMinutes}:{displayedSeconds}
       </div>
       <div className="flex justify-center">
         <div className="flex space-x-3">
           <Button
-            onClick={handleClickStart}
+            onClick={handleStart}
             disabled={isRunning}
             size="xsm"
             color="white"
@@ -74,12 +100,20 @@ const StopWatch = ({
             START
           </Button>
           <Button
-            onClick={handleClickStop}
+            onClick={handleStop}
             disabled={!isRunning}
             size="xsm"
             color="white"
           >
             STOP
+          </Button>
+          <Button
+            onClick={handleClear}
+            disabled={isRunning || !totalSeconds}
+            size="xsm"
+            color="white"
+          >
+            CLEAR
           </Button>
         </div>
       </div>
@@ -87,4 +121,4 @@ const StopWatch = ({
   );
 };
 
-export default StopWatch;
+export default StopWatchContainer;
