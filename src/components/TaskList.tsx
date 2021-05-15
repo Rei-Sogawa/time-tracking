@@ -2,19 +2,16 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { tasksRef } from '../firebaseApp';
 import { IdAndRef, Task } from '../models';
 import ListGroup from '../basics/ListGroup';
-import composeHooks from 'react-hooks-compose';
 
-const useTaskList = () => {
+const TaskListContainer = () => {
   const [tasks] = useCollectionData<Task.Data & IdAndRef>(tasksRef, {
     idField: 'id',
     refField: 'ref',
   });
-  return { tasks: tasks || [] };
+  return <TaskListPresenter tasks={tasks || []} />;
 };
 
-const TaskListPresenter: React.FC<ReturnType<typeof useTaskList>> = ({
-  tasks,
-}) => {
+const TaskListPresenter = ({ tasks }: { tasks: (Task.Data & IdAndRef)[] }) => {
   return (
     <ListGroup>
       {tasks.map((task) => (
@@ -24,4 +21,4 @@ const TaskListPresenter: React.FC<ReturnType<typeof useTaskList>> = ({
   );
 };
 
-export default composeHooks({ useTaskList })(TaskListPresenter);
+export default TaskListContainer;
