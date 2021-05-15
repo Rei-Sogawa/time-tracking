@@ -2,7 +2,6 @@ import { ClockIcon, TrashIcon } from '@heroicons/react/outline';
 import { useContext } from 'react';
 import { useToggle } from 'react-use';
 
-import ListGroup from '../basics/ListGroup';
 import { IdAndRef, Task } from '../models';
 import * as TimerStore from '../store/timer';
 import StopWatch from './StopWatch';
@@ -34,7 +33,7 @@ const TaskItemPresenter = ({
   const [showStopWatch, toggleShowStopWatch] = useToggle(false);
 
   return (
-    <ListGroup.Item>
+    <div className="px-4 py-3 border border-gray-200 rounded-md bg-white">
       <div className="space-y-3">
         <div className="flex justify-between">
           <div>{task.description}</div>
@@ -65,7 +64,7 @@ const TaskItemPresenter = ({
           </>
         )}
       </div>
-    </ListGroup.Item>
+    </div>
   );
 };
 

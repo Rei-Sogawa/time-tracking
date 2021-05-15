@@ -1,16 +1,17 @@
-import { differenceInSeconds } from 'date-fns';
+import { differenceInMilliseconds } from 'date-fns';
 import { useState } from 'react';
 import { useInterval, useToggle } from 'react-use';
 
 const useStopWatch = (options: { offsetSeconds?: number }) => {
   const [isRunning, toggleIsRunning] = useToggle(false);
   const [startTime, setStartTime] = useState<Date>();
-  const [runningSeconds, setRunningSeconds] = useState(0);
-  const [offsetSeconds, setOffsetSeconds] = useState(
-    options.offsetSeconds || 0,
+  const [runningMilliseconds, setRunningMilliseconds] = useState(0);
+  const [offsetMilliseconds, setOffsetMilliseconds] = useState(
+    options.offsetSeconds ? options.offsetSeconds * 1000 : 0,
   );
 
-  const seconds = offsetSeconds + runningSeconds;
+  const milliseconds = offsetMilliseconds + runningMilliseconds;
+  const seconds = Math.floor(milliseconds / 1000);
 
   const start = () => {
     if (!isRunning) {
@@ -22,23 +23,27 @@ const useStopWatch = (options: { offsetSeconds?: number }) => {
     if (isRunning) {
       toggleIsRunning(false);
       setStartTime(undefined);
-      setRunningSeconds(0);
-      setOffsetSeconds(
-        (prev) => prev + differenceInSeconds(new Date(), startTime as Date),
+      setRunningMilliseconds(0);
+      setOffsetMilliseconds(
+        (prev) =>
+          prev + differenceInMilliseconds(new Date(), startTime as Date),
       );
     }
   };
   const clear = () => {
-    if (!isRunning && seconds) {
+    if (!isRunning && milliseconds) {
       setStartTime(undefined);
       setStartTime(undefined);
-      setRunningSeconds(0);
-      setOffsetSeconds(0);
+      setRunningMilliseconds(0);
+      setOffsetMilliseconds(0);
     }
   };
 
   useInterval(
-    () => setRunningSeconds(differenceInSeconds(new Date(), startTime as Date)),
+    () =>
+      setRunningMilliseconds(
+        differenceInMilliseconds(new Date(), startTime as Date),
+      ),
     isRunning ? 1000 : null,
   );
 

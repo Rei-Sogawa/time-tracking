@@ -2,7 +2,6 @@ import { sortBy } from 'ramda';
 import { useMemo } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-import ListGroup from '../basics/ListGroup';
 import { tasksRef } from '../firebaseApp';
 import { IdAndRef, Task } from '../models';
 import TaskItemContainer from './TaskItem';
@@ -21,14 +20,12 @@ const TaskListContainer = () => {
 };
 
 const TaskListPresenter = ({ tasks }: { tasks: (Task.Data & IdAndRef)[] }) => {
-  return tasks.length ? (
-    <ListGroup>
+  return (
+    <div className="space-y-1">
       {tasks.map((task) => (
         <TaskItemContainer key={task.id} task={task} />
       ))}
-    </ListGroup>
-  ) : (
-    <></>
+    </div>
   );
 };
 
