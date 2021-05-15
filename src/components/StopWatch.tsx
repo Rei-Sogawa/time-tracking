@@ -3,16 +3,16 @@ import 'firebase/firestore';
 import { differenceInMilliseconds } from 'date-fns';
 import firebase from 'firebase/app';
 import { zip } from 'ramda';
-import { useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 
 import Button from '../basics/Button';
+import { Context as stopWatchContext } from '../contexts/stopwatch';
 import { useStopWatch } from '../hooks/useStopWatch';
 import { IdAndRef, Task } from '../models';
-import * as TimerStore from '../store/timer';
 import { convertSeconds } from '../utils/convertSeconds';
 
 const StopWatchContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
-  const timerStore = useContext(TimerStore.Context);
+  const { setState: setStopWatchContextState } = useContext(stopWatchContext);
 
   const offsetMilliseconds = zip(task.startTimes, task.stopTimes).reduce(
     (sum, [startTime, stopTime]) =>
@@ -27,10 +27,7 @@ const StopWatchContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
         firebase.firestore.Timestamp.now(),
       ),
     });
-    timerStore.dispatch({
-      type: 'SET_IS_RUNNING',
-      payload: { isRunning: true },
-    });
+    setStopWatchContextState((prev) => ({ ...prev, isRunning: true }));
   };
 
   const handleStop = () => {
@@ -39,10 +36,7 @@ const StopWatchContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
         firebase.firestore.Timestamp.now(),
       ),
     });
-    timerStore.dispatch({
-      type: 'SET_IS_RUNNING',
-      payload: { isRunning: false },
-    });
+    setStopWatchContextState((prev) => ({ ...prev, isRunning: false }));
   };
 
   const handleClear = () => {
@@ -50,17 +44,17 @@ const StopWatchContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
       startTimes: [],
       stopTimes: [],
     });
-    timerStore.dispatch({
-      type: 'SET_SECONDS',
-      payload: { seconds: 0 },
-    });
+    setStopWatchContextState((prev) => ({
+      ...prev,
+      isRunning: false,
+      seconds: 0,
+    }));
   };
 
-  const handleChangeSeconds = (value: number) =>
-    timerStore.dispatch({
-      type: 'SET_SECONDS',
-      payload: { seconds: value },
-    });
+  const handleChangeSeconds = useCallback((value: number) => {
+    setStopWatchContextState((prev) => ({ ...prev, seconds: value }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StopWatchPresenter

@@ -2,20 +2,37 @@ import { ClockIcon, TrashIcon } from '@heroicons/react/outline';
 import { useContext } from 'react';
 import { useToggle } from 'react-use';
 
+import { Context as stopWatchContext } from '../contexts/stopwatch';
 import { IdAndRef, Task } from '../models';
-import * as TimerStore from '../store/timer';
 import StopWatch from './StopWatch';
 
 const TaskItemContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
-  const timerStore = useContext(TimerStore.Context);
-  const isTimerRunning = timerStore.state.isRunning;
   const handleRemove = () =>
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
+
+  const { state: stopWatchContextState, setState: setStopWatchContextState } =
+    useContext(stopWatchContext);
+
+  const isTimerRunning = stopWatchContextState.isRunning;
+  const isOtherStopWatchOpen =
+    stopWatchContextState.taskId === task.id ||
+    stopWatchContextState.taskId === undefined
+      ? false
+      : true;
+
+  const handleToggleShowStopWatch = (show: boolean) => {
+    setStopWatchContextState((prev) => ({
+      ...prev,
+      taskId: show ? task.id : undefined,
+    }));
+  };
 
   return (
     <TaskItemPresenter
       task={task}
       isTimerRunning={isTimerRunning}
+      isOtherStopWatchOpen={isOtherStopWatchOpen}
+      onToggleShowStopWatch={handleToggleShowStopWatch}
       onRemove={handleRemove}
     />
   );
@@ -24,13 +41,22 @@ const TaskItemContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
 const TaskItemPresenter = ({
   task,
   isTimerRunning,
+  isOtherStopWatchOpen,
+  onToggleShowStopWatch,
   onRemove,
 }: {
   task: Task.Data & IdAndRef;
   isTimerRunning: boolean;
+  isOtherStopWatchOpen: boolean;
+  onToggleShowStopWatch: (show: boolean) => void;
   onRemove: () => void;
 }) => {
   const [showStopWatch, toggleShowStopWatch] = useToggle(false);
+
+  const handleToggleShowStopWatch = () => {
+    toggleShowStopWatch(!showStopWatch);
+    onToggleShowStopWatch(!showStopWatch);
+  };
 
   return (
     <div className="px-4 py-3 border border-gray-200 rounded-md bg-white">
@@ -38,23 +64,15 @@ const TaskItemPresenter = ({
         <div className="flex justify-between">
           <div>{task.description}</div>
           <div className="flex space-x-2">
-            {isTimerRunning ? (
-              <>
-                <ClockIcon className="h-6 w-6 cursor-not-allowed" />
-                <TrashIcon className="h-6 w-6 cursor-not-allowed" />
-              </>
+            {isTimerRunning || isOtherStopWatchOpen ? (
+              <ClockIcon className="h-6 w-6 cursor-not-allowed" />
             ) : (
-              <>
-                <ClockIcon
-                  onClick={toggleShowStopWatch}
-                  className="h-6 w-6 cursor-pointer"
-                />
-                <TrashIcon
-                  onClick={onRemove}
-                  className="h-6 w-6 cursor-pointer"
-                />
-              </>
+              <ClockIcon
+                onClick={handleToggleShowStopWatch}
+                className="h-6 w-6 cursor-pointer"
+              />
             )}
+            <TrashIcon onClick={onRemove} className="h-6 w-6 cursor-pointer" />
           </div>
         </div>
         {showStopWatch && (
