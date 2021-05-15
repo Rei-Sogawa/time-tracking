@@ -1,9 +1,11 @@
-import { ClockIcon,TrashIcon } from '@heroicons/react/outline';
+import { ClockIcon, TrashIcon } from '@heroicons/react/outline';
 
 import ListGroup from '../basics/ListGroup';
 import { IdAndRef, Task } from '../models';
 
 const TaskItemContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
+  // const handleRemove = () =>
+  //   window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
   const handleRemove = () => task.ref.delete();
   return <TaskItemPresenter task={task} onRemove={handleRemove} />;
 };

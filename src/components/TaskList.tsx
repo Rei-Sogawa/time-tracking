@@ -1,3 +1,4 @@
+import { sortBy } from 'ramda';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 import ListGroup from '../basics/ListGroup';
@@ -9,17 +10,23 @@ const TaskListContainer = () => {
   const [tasks] = useCollectionData<Task.Data & IdAndRef>(tasksRef, {
     idField: 'id',
     refField: 'ref',
+    snapshotOptions: { serverTimestamps: 'estimate' },
   });
-  return <TaskListPresenter tasks={tasks || []} />;
+  const sortedTasks = tasks
+    ? sortBy((task) => task.createdAt.toDate(), tasks)
+    : [];
+  return <TaskListPresenter tasks={sortedTasks} />;
 };
 
 const TaskListPresenter = ({ tasks }: { tasks: (Task.Data & IdAndRef)[] }) => {
-  return (
+  return tasks.length ? (
     <ListGroup>
       {tasks.map((task) => (
         <TaskItemContainer key={task.id} task={task} />
       ))}
     </ListGroup>
+  ) : (
+    <></>
   );
 };
 
