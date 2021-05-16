@@ -34,29 +34,24 @@ const StopWatch = ({
   const displayedMinutes = String(minutes).padStart(2, '0');
   const displayedHours = String(hours).padStart(2, '0');
 
-  const { setState: setStopWatchContextState } = useContext(
-    StopWatchContext.Context,
-  );
-  useEffect(
-    () =>
-      setStopWatchContextState((prev) => ({ ...prev, seconds: totalSeconds })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [totalSeconds],
-  );
+  const { setIsRunning, setSeconds } = useContext(StopWatchContext.Context);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setSeconds(totalSeconds), [totalSeconds]);
 
   const handleStart = () => {
     start();
-    setStopWatchContextState((prev) => ({ ...prev, isRunning: true }));
+    setIsRunning(true);
     onStart();
   };
   const handleStop = () => {
     stop();
-    setStopWatchContextState((prev) => ({ ...prev, isRunning: false }));
+    setIsRunning(false);
     onStop();
   };
   const handleClear = () => {
     clear();
-    setStopWatchContextState((prev) => ({ ...prev, seconds: 0 }));
+    setSeconds(0);
     onClear();
   };
 
@@ -67,20 +62,10 @@ const StopWatch = ({
       </div>
       <div className="flex justify-center">
         <div className="flex space-x-3">
-          <Button
-            onClick={handleStart}
-            disabled={isRunning}
-            size="xsm"
-            color="white"
-          >
+          <Button onClick={handleStart} disabled={isRunning} size="xsm" color="white">
             START
           </Button>
-          <Button
-            onClick={handleStop}
-            disabled={!isRunning}
-            size="xsm"
-            color="white"
-          >
+          <Button onClick={handleStop} disabled={!isRunning} size="xsm" color="white">
             STOP
           </Button>
           <Button

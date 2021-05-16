@@ -1,30 +1,31 @@
 import React, { createContext, useState } from 'react';
 
-type State = {
-  isRunning: boolean;
-  seconds: number;
-  taskIdWithOpen: undefined | string;
-};
+type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
 type Values = {
-  state: State;
-  setState: React.Dispatch<React.SetStateAction<State>>;
+  isRunning: boolean;
+  setIsRunning: SetState<boolean>;
+  seconds: number;
+  setSeconds: SetState<number>;
+  taskIdWithOpen: undefined | string;
+  setTaskIdWithOpen: SetState<undefined | string>;
 };
 
-const initialState = {
-  isRunning: false,
-  seconds: 0,
-  taskIdWithOpen: undefined,
-};
-
-export const Context = createContext<Values>({
-  state: initialState,
-  setState: () => {},
-});
+export const Context = createContext<Values>({} as Values);
 
 export const Provider: React.FC<{}> = ({ children }) => {
-  const [state, setState] = useState<State>(initialState);
-  return (
-    <Context.Provider value={{ state, setState }}>{children}</Context.Provider>
-  );
+  const [isRunning, setIsRunning] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [taskIdWithOpen, setTaskIdWithOpen] = useState<string>();
+
+  const values: Values = {
+    isRunning,
+    setIsRunning,
+    seconds,
+    setSeconds,
+    taskIdWithOpen,
+    setTaskIdWithOpen,
+  };
+
+  return <Context.Provider value={values}>{children}</Context.Provider>;
 };

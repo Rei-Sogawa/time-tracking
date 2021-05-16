@@ -10,41 +10,21 @@ import { IdAndRef, Task } from '../models';
 
 type Values = {
   tasks: (Task.Data & IdAndRef)[];
-  addStartTime: ({
-    taskRef,
-    prevStartTimes,
-  }: {
-    taskRef: firebase.firestore.DocumentReference;
-    prevStartTimes: firebase.firestore.Timestamp[];
-  }) => Promise<void>;
-  addStopTime: ({
-    taskRef,
-    prevStopTimes,
-  }: {
-    taskRef: firebase.firestore.DocumentReference;
-    prevStopTimes: firebase.firestore.Timestamp[];
-  }) => Promise<void>;
-  clearStartAndStopTimes: (
-    taskRef: firebase.firestore.DocumentReference,
-  ) => Promise<void>;
+  addStartTime: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
+  addStopTime: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
+  clearStartAndStopTimes: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
 };
 
 const initialValues: Values = {
   tasks: [],
-  addStartTime: ({ taskRef, prevStartTimes }) => {
+  addStartTime: (taskRef) => {
     return taskRef.update({
-      startTimes: [
-        ...prevStartTimes,
-        firebase.firestore.FieldValue.serverTimestamp(),
-      ],
+      startTimes: firebase.firestore.FieldValue.arrayUnion(firebase.firestore.Timestamp.now()),
     });
   },
-  addStopTime: ({ taskRef, prevStopTimes }) => {
+  addStopTime: (taskRef) => {
     return taskRef.update({
-      stopTimes: [
-        ...prevStopTimes,
-        firebase.firestore.FieldValue.serverTimestamp(),
-      ],
+      stopTimes: firebase.firestore.FieldValue.arrayUnion(firebase.firestore.Timestamp.now()),
     });
   },
   clearStartAndStopTimes: (taskRef) => {
@@ -70,8 +50,6 @@ export const Provider: React.FC<{}> = ({ children }) => {
   );
 
   return (
-    <Context.Provider value={{ ...initialValues, tasks: sortedTasks }}>
-      {children}
-    </Context.Provider>
+    <Context.Provider value={{ ...initialValues, tasks: sortedTasks }}>{children}</Context.Provider>
   );
 };
