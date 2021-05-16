@@ -16,7 +16,7 @@ const App = () => {
 
   const { seconds: totalSeconds, taskWithOpen } = useContext(StopWatchContext.Context);
   const { formattedTime } = convertSeconds(totalSeconds);
-  const title = taskWithOpen ? formattedTime : 'timer tracker';
+  const title = taskWithOpen ? formattedTime : 'time tracker';
 
   return (
     <HelmetProvider>
