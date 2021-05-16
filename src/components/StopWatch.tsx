@@ -51,7 +51,7 @@ const StopWatch = ({
   };
   const handleStop = () => {
     stop();
-    setStopWatchContextState((prev) => ({ ...prev, isRunning: true }));
+    setStopWatchContextState((prev) => ({ ...prev, isRunning: false }));
     onStop();
   };
   const handleClear = () => {
