@@ -1,10 +1,21 @@
-export const convertSeconds = (seconds: number) => {
-  const _hours = Math.floor(seconds / 60 / 60);
-  const _minutes = Math.floor(seconds / 60) - _hours * 60;
-  const _seconds = Math.floor(seconds % 60);
+export const convertSeconds = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 60 / 60);
+  const minutes = Math.floor(totalSeconds / 60) - hours * 60;
+  const seconds = Math.floor(totalSeconds % 60);
+
+  const formattedSeconds = String(seconds).padStart(2, '0');
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedHours = String(hours).padStart(2, '0');
+
+  const formattedTime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
   return {
-    seconds: _seconds,
-    minutes: _minutes,
-    hours: _hours,
+    seconds,
+    minutes,
+    hours,
+    formattedSeconds,
+    formattedMinutes,
+    formattedHours,
+    formattedTime,
   };
 };

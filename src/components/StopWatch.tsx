@@ -28,11 +28,7 @@ const StopWatch = ({
     offsetMilliseconds,
   });
 
-  const { seconds, minutes, hours } = convertSeconds(totalSeconds);
-
-  const displayedSeconds = String(seconds).padStart(2, '0');
-  const displayedMinutes = String(minutes).padStart(2, '0');
-  const displayedHours = String(hours).padStart(2, '0');
+  const { formattedTime } = convertSeconds(totalSeconds);
 
   const { setIsRunning, setSeconds } = useContext(StopWatchContext.Context);
 
@@ -57,9 +53,7 @@ const StopWatch = ({
 
   return (
     <div className="space-y-3">
-      <div className="text-center font-mono text-3xl">
-        {displayedHours}:{displayedMinutes}:{displayedSeconds}
-      </div>
+      <div className="text-center font-mono text-3xl">{formattedTime}</div>
       <div className="flex justify-center">
         <div className="flex space-x-3">
           <Button onClick={handleStart} disabled={isRunning} size="xsm" color="white">

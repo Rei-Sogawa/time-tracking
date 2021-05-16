@@ -11,33 +11,40 @@ import * as TasksContext from '../contexts/Tasks';
 import { IdAndRef, Task } from '../models';
 
 const TaskItem = ({ task }: { task: Task.Data & IdAndRef }) => {
-  const handleRemove = () => task.ref.delete();
-
   const offsetMilliseconds = zip(task.stopTimes, task.startTimes).reduce(
     (total, [stopTime, startTime]) =>
       total + differenceInMilliseconds(stopTime.toDate(), startTime.toDate()),
     0,
   );
 
-  const { addStartTime, addStopTime, clearStartAndStopTimes } = useContext(TasksContext.Context);
+  const { deleteTask, addStartTime, addStopTime, clearStartAndStopTimes } = useContext(
+    TasksContext.Context,
+  );
 
+  const handleRemove = () => deleteTask(task.ref);
   const handleStart = () => addStartTime(task.ref);
   const handleStop = () => addStopTime(task.ref);
   const handleClear = () => clearStartAndStopTimes(task.ref);
 
   const [showStopWatch, toggleStopWatch] = useToggle(false);
 
-  const { isRunning, taskIdWithOpen, setTaskIdWithOpen } = useContext(StopWatchContext.Context);
-  const isOtherStopWatchOpen = !!taskIdWithOpen && taskIdWithOpen !== task.id;
+  const { isRunning, taskWithOpen, setTaskWithOpen, setSeconds } = useContext(
+    StopWatchContext.Context,
+  );
+
+  const isOtherStopWatchOpen = !!taskWithOpen && taskWithOpen.id !== task.id;
   const canToggleStopWatch = !isRunning && !isOtherStopWatchOpen;
+
+  const canRemove = !showStopWatch || !isRunning;
 
   const handleToggleStopWatch = () => {
     if (showStopWatch) {
       toggleStopWatch(false);
-      setTaskIdWithOpen(undefined);
+      setTaskWithOpen(undefined);
+      setSeconds(0);
     } else {
       toggleStopWatch(true);
-      setTaskIdWithOpen(task.id);
+      setTaskWithOpen({ id: task.id, description: task.description });
     }
   };
 
@@ -57,7 +64,11 @@ const TaskItem = ({ task }: { task: Task.Data & IdAndRef }) => {
             >
               <ClockIcon className="h-6 w-6" />
             </button>
-            <button className="focus:outline-none" onClick={handleRemove}>
+            <button
+              className={classNames('focus:outline-none', !canRemove && 'cursor-not-allowed')}
+              onClick={handleRemove}
+              disabled={!canRemove}
+            >
               <TrashIcon className="h-6 w-6" />
             </button>
           </div>

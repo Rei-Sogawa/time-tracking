@@ -10,6 +10,7 @@ import { IdAndRef, Task } from '../models';
 
 type Values = {
   tasks: (Task.Data & IdAndRef)[];
+  deleteTask: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
   addStartTime: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
   addStopTime: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
   clearStartAndStopTimes: (taskRef: firebase.firestore.DocumentReference) => Promise<void>;
@@ -17,6 +18,9 @@ type Values = {
 
 const initialValues: Values = {
   tasks: [],
+  deleteTask: (taskRef) => {
+    return taskRef.delete();
+  },
   addStartTime: (taskRef) => {
     return taskRef.update({
       startTimes: firebase.firestore.FieldValue.arrayUnion(firebase.firestore.Timestamp.now()),
