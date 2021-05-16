@@ -1,84 +1,22 @@
 import 'firebase/firestore';
 
-import { differenceInMilliseconds } from 'date-fns';
-import firebase from 'firebase/app';
-import { zip } from 'ramda';
-import { useCallback, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import Button from '../basics/Button';
-import { Context as stopWatchContext } from '../contexts/stopwatch';
+import * as StopWatchContext from '../contexts/StopWatch';
 import { useStopWatch } from '../hooks/useStopWatch';
-import { IdAndRef, Task } from '../models';
 import { convertSeconds } from '../utils/convertSeconds';
 
-const StopWatchContainer = ({ task }: { task: Task.Data & IdAndRef }) => {
-  const { setState: setStopWatchContextState } = useContext(stopWatchContext);
-
-  const offsetMilliseconds = zip(task.startTimes, task.stopTimes).reduce(
-    (sum, [startTime, stopTime]) =>
-      sum + differenceInMilliseconds(stopTime.toDate(), startTime.toDate()),
-    0,
-  );
-  const offsetSeconds = Math.floor(offsetMilliseconds / 1000);
-
-  const handleStart = () => {
-    task.ref.update({
-      startTimes: firebase.firestore.FieldValue.arrayUnion(
-        firebase.firestore.Timestamp.now(),
-      ),
-    });
-    setStopWatchContextState((prev) => ({ ...prev, isRunning: true }));
-  };
-
-  const handleStop = () => {
-    task.ref.update({
-      stopTimes: firebase.firestore.FieldValue.arrayUnion(
-        firebase.firestore.Timestamp.now(),
-      ),
-    });
-    setStopWatchContextState((prev) => ({ ...prev, isRunning: false }));
-  };
-
-  const handleClear = () => {
-    task.ref.update({
-      startTimes: [],
-      stopTimes: [],
-    });
-    setStopWatchContextState((prev) => ({
-      ...prev,
-      isRunning: false,
-      seconds: 0,
-    }));
-  };
-
-  const handleChangeSeconds = useCallback((value: number) => {
-    setStopWatchContextState((prev) => ({ ...prev, seconds: value }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <StopWatchPresenter
-      offsetSeconds={offsetSeconds}
-      onStart={handleStart}
-      onStop={handleStop}
-      onClear={handleClear}
-      onChangeSeconds={handleChangeSeconds}
-    />
-  );
-};
-
-const StopWatchPresenter = ({
-  offsetSeconds,
+const StopWatch = ({
+  offsetMilliseconds,
   onStart,
   onStop,
   onClear,
-  onChangeSeconds,
 }: {
-  offsetSeconds: number;
+  offsetMilliseconds: number;
   onStart: () => void;
   onStop: () => void;
   onClear: () => void;
-  onChangeSeconds: (value: number) => void;
 }) => {
   const {
     seconds: totalSeconds,
@@ -87,7 +25,7 @@ const StopWatchPresenter = ({
     stop,
     clear,
   } = useStopWatch({
-    offsetSeconds,
+    offsetMilliseconds,
   });
 
   const { seconds, minutes, hours } = convertSeconds(totalSeconds);
@@ -96,19 +34,29 @@ const StopWatchPresenter = ({
   const displayedMinutes = String(minutes).padStart(2, '0');
   const displayedHours = String(hours).padStart(2, '0');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => onChangeSeconds(totalSeconds), [totalSeconds]);
+  const { setState: setStopWatchContextState } = useContext(
+    StopWatchContext.Context,
+  );
+  useEffect(
+    () =>
+      setStopWatchContextState((prev) => ({ ...prev, seconds: totalSeconds })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [totalSeconds],
+  );
 
   const handleStart = () => {
     start();
+    setStopWatchContextState((prev) => ({ ...prev, isRunning: true }));
     onStart();
   };
   const handleStop = () => {
     stop();
+    setStopWatchContextState((prev) => ({ ...prev, isRunning: true }));
     onStop();
   };
   const handleClear = () => {
     clear();
+    setStopWatchContextState((prev) => ({ ...prev, seconds: 0 }));
     onClear();
   };
 
@@ -149,4 +97,4 @@ const StopWatchPresenter = ({
   );
 };
 
-export default StopWatchContainer;
+export default StopWatch;

@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 type State = {
   isRunning: boolean;
   seconds: number;
-  taskId: undefined | string;
+  taskIdWithOpen: undefined | string;
 };
 
 type Values = {
@@ -14,7 +14,7 @@ type Values = {
 const initialState = {
   isRunning: false,
   seconds: 0,
-  taskId: undefined,
+  taskIdWithOpen: undefined,
 };
 
 export const Context = createContext<Values>({

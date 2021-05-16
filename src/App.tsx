@@ -1,5 +1,6 @@
 import TaskForm, { TaskFormValues } from './components/TaskForm';
 import TaskList from './components/TaskList';
+import * as StopWatchContext from './contexts/StopWatch';
 import * as TasksContext from './contexts/Tasks';
 import { tasksRef } from './firebaseApp';
 import { Task } from './models';
@@ -21,4 +22,9 @@ const App = () => {
   );
 };
 
-export default App;
+// eslint-disable-next-line import/no-anonymous-default-export
+export default () => (
+  <StopWatchContext.Provider>
+    <App />
+  </StopWatchContext.Provider>
+);

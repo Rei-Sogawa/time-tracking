@@ -2,12 +2,12 @@ import { differenceInMilliseconds } from 'date-fns';
 import { useState } from 'react';
 import { useInterval, useToggle } from 'react-use';
 
-const useStopWatch = (options: { offsetSeconds?: number }) => {
+const useStopWatch = (options: { offsetMilliseconds?: number }) => {
   const [isRunning, toggleIsRunning] = useToggle(false);
   const [startTime, setStartTime] = useState<Date>();
   const [runningMilliseconds, setRunningMilliseconds] = useState(0);
   const [offsetMilliseconds, setOffsetMilliseconds] = useState(
-    options.offsetSeconds ? options.offsetSeconds * 1000 : 0,
+    options.offsetMilliseconds ? options.offsetMilliseconds : 0,
   );
 
   const milliseconds = offsetMilliseconds + runningMilliseconds;
