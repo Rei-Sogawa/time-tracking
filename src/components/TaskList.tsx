@@ -1,25 +1,10 @@
-import { sortBy } from 'ramda';
-import { useMemo } from 'react';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useContext } from 'react';
 
-import { tasksRef } from '../firebaseApp';
-import { IdAndRef, Task } from '../models';
+import { Context } from '../contexts/Tasks';
 import TaskItemContainer from './TaskItem';
 
-const TaskListContainer = () => {
-  const [tasks] = useCollectionData<Task.Data & IdAndRef>(tasksRef, {
-    idField: 'id',
-    refField: 'ref',
-    snapshotOptions: { serverTimestamps: 'estimate' },
-  });
-  const sortedTasks = useMemo(
-    () => (tasks ? sortBy((task) => -task.createdAt.toDate(), tasks) : []),
-    [tasks],
-  );
-  return <TaskListPresenter tasks={sortedTasks} />;
-};
-
-const TaskListPresenter = ({ tasks }: { tasks: (Task.Data & IdAndRef)[] }) => {
+const TaskList = () => {
+  const { tasks } = useContext(Context);
   return (
     <div className="space-y-1">
       {tasks.map((task) => (
@@ -29,4 +14,5 @@ const TaskListPresenter = ({ tasks }: { tasks: (Task.Data & IdAndRef)[] }) => {
   );
 };
 
-export default TaskListContainer;
+// eslint-disable-next-line import/no-anonymous-default-export
+export default TaskList;
