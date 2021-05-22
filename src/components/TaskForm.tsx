@@ -1,8 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, TextField } from '@material-ui/core';
-import { FC, FormEvent } from 'react';
+import { Autocomplete } from '@material-ui/lab';
+import { FC, FormEvent, useContext } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
+
+import { TasksContext } from './TasksContext';
 
 const formSchema = yup.object().shape({
   category: yup
@@ -57,13 +60,34 @@ const TaskForm: FC<Props> = ({
     })(e);
   };
 
+  const { categories } = useContext(TasksContext);
+
   return (
     <form onSubmit={handleSubmit}>
       <Box display="flex">
         <Controller
           name="category"
           control={control}
-          render={({ field }) => <TextField {...field} label="category" />}
+          render={({ field }) => (
+            <Autocomplete
+              {...field}
+              onChange={(_, v) => {
+                field.onChange(v);
+              }}
+              freeSolo
+              options={categories}
+              style={{ width: 200 }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="category"
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                  }}
+                />
+              )}
+            />
+          )}
         />
         <Box ml={2} flexGrow={1}>
           <Controller
