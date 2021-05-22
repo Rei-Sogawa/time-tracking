@@ -1,7 +1,11 @@
-import React from 'react';
+import { CssBaseline } from '@material-ui/core';
 
 function App() {
-  return <div>App</div>;
+  return (
+    <div>
+      <CssBaseline />
+    </div>
+  );
 }
 
 export default App;
