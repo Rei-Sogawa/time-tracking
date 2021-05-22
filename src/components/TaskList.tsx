@@ -1,4 +1,5 @@
 import {
+  Box,
   Checkbox,
   Divider,
   IconButton,
@@ -32,10 +33,12 @@ const TaskList: FC<{}> = () => {
             <ListItemText
               primary={task.description}
               secondary={
-                <>
-                  {task.category}
-                  {task.estimatedMinutes && ` / ${task.estimatedMinutes} min`}
-                </>
+                <Box display="flex">
+                  <Box>{task.category}</Box>
+                  <Box ml={1}>
+                    {task.estimatedMinutes && `${task.estimatedMinutes} min`}
+                  </Box>
+                </Box>
               }
             />
             <ListItemSecondaryAction>
