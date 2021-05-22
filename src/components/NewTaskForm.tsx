@@ -1,11 +1,11 @@
 import { Typography } from '@material-ui/core';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 
-import useTaskService from '../hooks/useTasksService';
 import TaskForm, { FormValues } from './TaskForm';
+import { TasksContext } from './TasksContext';
 
 const NewTaskForm: FC<{}> = () => {
-  const { addNewTask } = useTaskService();
+  const { addNewTask } = useContext(TasksContext);
   const handleSubmitNewTask = (values: FormValues) => {
     addNewTask(values);
   };

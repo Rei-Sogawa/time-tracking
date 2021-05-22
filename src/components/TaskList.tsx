@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   Divider,
   IconButton,
@@ -10,14 +9,12 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import { Delete, Edit, Timer } from '@material-ui/icons';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 
-import useTaskService from '../hooks/useTasksService';
-import useTasksSubscription from '../hooks/useTasksSubscription';
+import { TasksContext } from './TasksContext';
 
 const TaskList: FC<{}> = () => {
-  const { sortedTask: tasks } = useTasksSubscription();
-  const { toggleCompleteTask, removeTask } = useTaskService();
+  const { tasks, toggleCompleteTask, removeTask } = useContext(TasksContext);
 
   return (
     <List>
@@ -32,14 +29,10 @@ const TaskList: FC<{}> = () => {
             </ListItemIcon>
             <ListItemText
               primary={task.description}
-              secondary={
-                <Box display="flex">
-                  <Box>{task.category}</Box>
-                  <Box ml={1}>
-                    {task.estimatedMinutes && `${task.estimatedMinutes} min`}
-                  </Box>
-                </Box>
-              }
+              secondary={[
+                task.category,
+                task.estimatedMinutes && `${task.estimatedMinutes}min`,
+              ].join(' ')}
             />
             <ListItemSecondaryAction>
               <IconButton>
