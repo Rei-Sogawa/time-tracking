@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import { FC } from 'react';
 
 import useTaskService from '../hooks/useTasksService';
@@ -8,7 +9,12 @@ const NewTaskForm: FC<{}> = () => {
   const handleSubmitNewTask = (values: FormValues) => {
     addNewTask(values);
   };
-  return <TaskForm onSubmit={handleSubmitNewTask} />;
+  return (
+    <>
+      <Typography variant="h5">Add New Task</Typography>
+      <TaskForm onSubmit={handleSubmitNewTask} />
+    </>
+  );
 };
 
 export default NewTaskForm;

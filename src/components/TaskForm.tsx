@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, TextField, Typography } from '@material-ui/core';
+import { Box, TextField } from '@material-ui/core';
 import { FC, FormEvent } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -58,49 +58,46 @@ const TaskForm: FC<Props> = ({
   };
 
   return (
-    <>
-      <Typography variant="h5">Add New Task</Typography>
-      <form onSubmit={handleSubmit}>
-        <Box display="flex">
+    <form onSubmit={handleSubmit}>
+      <Box display="flex">
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => <TextField {...field} label="category" />}
+        />
+        <Box ml={2} flexGrow={1}>
           <Controller
-            name="category"
+            name="description"
             control={control}
-            render={({ field }) => <TextField {...field} label="category" />}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="description"
+                error={!!errors.description}
+                helperText={errors.description?.message}
+                fullWidth
+              />
+            )}
           />
-          <Box ml={2} flexGrow={1}>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="description"
-                  error={!!errors.description}
-                  helperText={errors.description?.message}
-                  fullWidth
-                />
-              )}
-            />
-          </Box>
-          <Box ml={2}>
-            <Controller
-              name="estimatedMinutes"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  type="number"
-                  label="estimated minutes"
-                  error={!!errors.estimatedMinutes}
-                  helperText={errors.estimatedMinutes?.message}
-                />
-              )}
-            />
-          </Box>
         </Box>
-        <input type="submit" style={{ display: 'none' }} />
-      </form>
-    </>
+        <Box ml={2}>
+          <Controller
+            name="estimatedMinutes"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="number"
+                label="estimated minutes"
+                error={!!errors.estimatedMinutes}
+                helperText={errors.estimatedMinutes?.message}
+              />
+            )}
+          />
+        </Box>
+      </Box>
+      <input type="submit" style={{ display: 'none' }} />
+    </form>
   );
 };
 
