@@ -1,17 +1,21 @@
 import { Box, Container, CssBaseline } from '@material-ui/core';
 
-import TaskForm from './components/TaskForm';
+import NewTaskForm from './components/NewTaskForm';
+import TaskList from './components/TaskList';
 
 function App() {
   return (
-    <div>
+    <>
       <CssBaseline />
       <Container maxWidth="md">
         <Box mt={3}>
-          <TaskForm onSubmit={(values) => console.log(values)}></TaskForm>
+          <NewTaskForm />
+          <Box mt={2}>
+            <TaskList />
+          </Box>
         </Box>
       </Container>
-    </div>
+    </>
   );
 }
 

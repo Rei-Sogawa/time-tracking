@@ -17,3 +17,13 @@ if (!firebase.apps.length) {
 }
 
 export const db = firebase.firestore();
+export const tasksRef = db.collection('tasks');
+
+export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
+
+export type IdAndRef = {
+  id: string;
+  ref: firebase.firestore.DocumentReference;
+};
+export type Timestamp = firebase.firestore.Timestamp;
+export type FieldValue = firebase.firestore.FieldValue;

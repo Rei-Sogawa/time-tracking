@@ -19,7 +19,7 @@ const formSchema = yup.object().shape({
     .transform((v, o) => (o === '' ? null : v)),
 });
 
-type FormValues = {
+export type FormValues = {
   category: string | null;
   description: string;
   estimatedMinutes: number | null;
