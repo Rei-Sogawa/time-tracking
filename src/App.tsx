@@ -1,17 +1,16 @@
-import { CssBaseline } from '@material-ui/core';
+import { Box, Container, CssBaseline } from '@material-ui/core';
 
-import useStopWatch from './hooks/useStopWatch';
+import TaskForm from './components/TaskForm';
 
 function App() {
-  const { seconds, start, pause, reset } = useStopWatch();
-
   return (
     <div>
       <CssBaseline />
-      <div>{seconds}</div>
-      <button onClick={start}>START</button>
-      <button onClick={pause}>PAUSE</button>
-      <button onClick={() => reset()}>RESET</button>
+      <Container maxWidth="md">
+        <Box mt={3}>
+          <TaskForm onSubmit={(values) => console.log(values)}></TaskForm>
+        </Box>
+      </Container>
     </div>
   );
 }
