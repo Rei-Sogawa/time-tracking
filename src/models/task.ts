@@ -9,7 +9,7 @@ export type Data = {
   description: string;
   category: string | null;
   estimatedMinutes: number | null;
-  requiredMinutes: number | null;
+  requiredSeconds: number;
   createdAt: Timestamp | FieldValue;
   updatedAt: Timestamp | FieldValue;
   completedAt: Timestamp | FieldValue | null;
@@ -21,7 +21,7 @@ export const getDefaultData = (): Data => ({
   description: '',
   category: null,
   estimatedMinutes: null,
-  requiredMinutes: null,
+  requiredSeconds: 0,
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
   completedAt: null,

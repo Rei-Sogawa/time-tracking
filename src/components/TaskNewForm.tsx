@@ -11,7 +11,7 @@ const NewTaskForm: FC<{}> = () => {
   };
   return (
     <>
-      <Typography variant="h5">Add New Task</Typography>
+      <Typography variant="h6">Add New Task</Typography>
       <TaskForm onSubmit={handleSubmitNewTask} />
     </>
   );

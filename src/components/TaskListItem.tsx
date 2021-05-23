@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Typography,
 } from '@material-ui/core';
 import { Delete, Edit, Timer } from '@material-ui/icons';
 import { useContext, useRef } from 'react';
@@ -20,7 +21,23 @@ type Props = {
 };
 
 const TaskListItem = ({ task }: Props) => {
-  const { toggleCompleteTask, removeTask } = useContext(TasksContext);
+  const {
+    toggleCompleteTask,
+    removeTask,
+    taskBeingFocused,
+    focusTask,
+    focusOutTask,
+  } = useContext(TasksContext);
+
+  const handleFocusTask = () => {
+    if (taskBeingFocused?.id !== task.id) {
+      focusTask(task.id);
+      return;
+    } else {
+      focusOutTask();
+    }
+  };
+
   const [showEditForm, toggleEditForm] = useToggle(false);
   const taskEditFormRef = useRef(null);
   useClickAway(taskEditFormRef, () => toggleEditForm(false));
@@ -45,14 +62,19 @@ const TaskListItem = ({ task }: Props) => {
               />
             </ListItemIcon>
             <ListItemText
-              primary={task.description}
+              primary={
+                <Typography color="textPrimary">{task.description}</Typography>
+              }
               secondary={[
                 task.category,
                 task.estimatedMinutes && `${task.estimatedMinutes}min`,
-              ].join(' ')}
+                `-> ${Math.floor(task.requiredSeconds / 60)}min`,
+              ]
+                .filter((_) => !!_)
+                .join(' / ')}
             />
             <ListItemSecondaryAction>
-              <IconButton>
+              <IconButton onClick={() => handleFocusTask()}>
                 <Timer />
               </IconButton>
               <IconButton onClick={() => toggleEditForm(true)}>
