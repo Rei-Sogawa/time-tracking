@@ -9,12 +9,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import { ArrowRightAlt, Delete, Edit, Timer } from '@material-ui/icons';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { useClickAway, useToggle } from 'react-use';
 
 import { serverTimestamp } from '../firebaseApp';
 import { Task } from '../models';
 import TaskEditForm from './TaskEditForm';
+import { TasksContext } from './TasksContext';
 
 type Props = {
   task: Task.Model;
@@ -36,6 +37,10 @@ const TaskListItem = ({ task }: Props) => {
 
   const handleClickRemove = () =>
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
+
+  const { focusTask } = useContext(TasksContext);
+
+  const handleClickTimer = () => focusTask(task.id);
 
   return (
     <>
@@ -65,12 +70,12 @@ const TaskListItem = ({ task }: Props) => {
                   {task.category && `${task.category} / `}
                   {task.estimatedMinutes && `${task.estimatedMinutes}min`}
                   <ArrowRightAlt />
-                  {Math.floor(task.requiredSeconds * 1_000)}min
+                  {Math.floor(task.requiredSeconds / 60)}min
                 </span>
               }
             />
             <ListItemSecondaryAction>
-              <IconButton>
+              <IconButton onClick={handleClickTimer}>
                 <Timer />
               </IconButton>
               <IconButton onClick={handleClickEdit}>

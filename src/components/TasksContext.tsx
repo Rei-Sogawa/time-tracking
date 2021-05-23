@@ -9,8 +9,12 @@ type Values = {
   tasks: Task.Model[];
   categories: string[];
   taskBeingFocused: Task.Model | undefined;
+  timer: { seconds: number; isRunning: boolean };
   focusTask: (taskId: string) => void;
-  focusOutTask: () => void;
+  startTimer: () => void;
+  countTimer: (seconds: number) => void;
+  pauseTimer: () => void;
+  clearTimer: () => void;
 };
 
 export const TasksContext = createContext({} as Values);
@@ -33,9 +37,45 @@ export const TasksProvider: FC<{}> = ({ children }) => {
 
   const taskBeingFocused = tasks.find(({ id }) => taskIdBeingFocused === id);
 
-  const focusTask = (taskId: string) => setTaskIdBeingFocused(taskId);
+  const focusTask = (taskId: string) => {
+    if (timer.isRunning) return;
+    if (taskId === taskIdBeingFocused) {
+      setTaskIdBeingFocused(undefined);
+      setTimer((prev) => ({ ...prev, seconds: 0, isRunning: false }));
+    } else {
+      setTaskIdBeingFocused(taskId);
+    }
+  };
 
-  const focusOutTask = () => setTaskIdBeingFocused(undefined);
+  const [timer, setTimer] = useState({ seconds: 0, isRunning: false });
+
+  const startTimer = () => {
+    if (timer.isRunning) return;
+    setTimer((prev) => ({ ...prev, isRunning: true }));
+  };
+
+  const countTimer = (seconds: number) => {
+    if (!timer.isRunning) return;
+    setTimer((prev) => ({ ...prev, seconds }));
+  };
+
+  const pauseTimer = () => {
+    if (!timer.isRunning) return;
+    if (taskBeingFocused) {
+      taskBeingFocused.ref.update({ requiredSeconds: timer.seconds });
+    }
+    setTimer((prev) => ({ ...prev, isRunning: false }));
+  };
+
+  const clearTimer = () => {
+    if (timer.isRunning) return;
+    if (window.confirm('タイマーをクリアします。よろしいですか？')) {
+      if (taskBeingFocused) {
+        taskBeingFocused.ref.update({ requiredSeconds: 0 });
+      }
+      setTimer((prev) => ({ ...prev, seconds: 0 }));
+    }
+  };
 
   return (
     <TasksContext.Provider
@@ -43,8 +83,12 @@ export const TasksProvider: FC<{}> = ({ children }) => {
         tasks,
         categories,
         taskBeingFocused,
+        timer,
         focusTask,
-        focusOutTask,
+        startTimer,
+        countTimer,
+        pauseTimer,
+        clearTimer,
       }}
     >
       {children}
