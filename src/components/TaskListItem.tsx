@@ -8,39 +8,34 @@ import {
   ListItemText,
   Typography,
 } from '@material-ui/core';
-import { Delete, Edit, Timer } from '@material-ui/icons';
-import { useContext, useRef } from 'react';
+import { ArrowRightAlt, Delete, Edit, Timer } from '@material-ui/icons';
+import { useRef } from 'react';
 import { useClickAway, useToggle } from 'react-use';
 
+import { serverTimestamp } from '../firebaseApp';
 import { Task } from '../models';
 import TaskEditForm from './TaskEditForm';
-import { TasksContext } from './TasksContext';
 
 type Props = {
   task: Task.Model;
 };
 
 const TaskListItem = ({ task }: Props) => {
-  const {
-    toggleCompleteTask,
-    removeTask,
-    taskBeingFocused,
-    focusTask,
-    focusOutTask,
-  } = useContext(TasksContext);
-
-  const handleFocusTask = () => {
-    if (taskBeingFocused?.id !== task.id) {
-      focusTask(task.id);
-      return;
-    } else {
-      focusOutTask();
-    }
-  };
-
   const [showEditForm, toggleEditForm] = useToggle(false);
+
   const taskEditFormRef = useRef(null);
+
   useClickAway(taskEditFormRef, () => toggleEditForm(false));
+
+  const handleToggleComplete = () =>
+    task.ref.update({
+      completedAt: task.completedAt ? null : serverTimestamp(),
+    });
+
+  const handleClickEdit = () => toggleEditForm(true);
+
+  const handleClickRemove = () =>
+    window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
 
   return (
     <>
@@ -58,38 +53,33 @@ const TaskListItem = ({ task }: Props) => {
             <ListItemIcon>
               <Checkbox
                 checked={!!task.completedAt}
-                onChange={() => toggleCompleteTask(task)}
+                onChange={handleToggleComplete}
               />
             </ListItemIcon>
             <ListItemText
               primary={
                 <Typography color="textPrimary">{task.description}</Typography>
               }
-              secondary={[
-                task.category,
-                task.estimatedMinutes && `${task.estimatedMinutes}min`,
-                `-> ${Math.floor(task.requiredSeconds / 60)}min`,
-              ]
-                .filter((_) => !!_)
-                .join(' / ')}
+              secondary={
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  {task.category && `${task.category} / `}
+                  {task.estimatedMinutes && `${task.estimatedMinutes}min`}
+                  <ArrowRightAlt />
+                  {Math.floor(task.requiredSeconds * 1_000)}min
+                </span>
+              }
             />
             <ListItemSecondaryAction>
-              <IconButton onClick={() => handleFocusTask()}>
+              <IconButton>
                 <Timer />
               </IconButton>
-              <IconButton onClick={() => toggleEditForm(true)}>
+              <IconButton onClick={handleClickEdit}>
                 <Edit />
               </IconButton>
-              <IconButton
-                onClick={() => {
-                  if (window.confirm('タスクを削除します。よろしいですか？')) {
-                    removeTask(task);
-                  }
-                }}
-              >
+              <IconButton onClick={handleClickRemove}>
                 <Delete />
               </IconButton>
-            </ListItemSecondaryAction>{' '}
+            </ListItemSecondaryAction>
           </ListItemIcon>
         </ListItem>
       )}

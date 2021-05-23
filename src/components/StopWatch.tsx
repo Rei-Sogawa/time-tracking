@@ -34,8 +34,6 @@ const StopWatchWithTask: FC<{ taskBeingFocused: Task.Model }> = ({
 }) => {
   const classes = useStyles();
 
-  const { pauseStopWatch, clearStopWatch } = useContext(TasksContext);
-
   const {
     seconds: totalSeconds,
     isRunning,
@@ -45,16 +43,6 @@ const StopWatchWithTask: FC<{ taskBeingFocused: Task.Model }> = ({
   } = useStopWatch({
     offsetMilliseconds: taskBeingFocused.requiredSeconds * 1_000,
   });
-
-  const handlePause = () => {
-    pauseStopWatch({ task: taskBeingFocused, requiredSeconds: totalSeconds });
-    pause();
-  };
-
-  const handleClear = () => {
-    clearStopWatch(taskBeingFocused);
-    reset();
-  };
 
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = Math.floor(totalSeconds % 60);
@@ -74,10 +62,10 @@ const StopWatchWithTask: FC<{ taskBeingFocused: Task.Model }> = ({
         <Button variant="contained" onClick={() => start()}>
           START
         </Button>
-        <Button variant="contained" onClick={() => handlePause()}>
+        <Button variant="contained" onClick={() => pause()}>
           PAUSE
         </Button>
-        <Button variant="contained" onClick={() => handleClear()}>
+        <Button variant="contained" onClick={() => reset()}>
           CLEAR
         </Button>
       </div>

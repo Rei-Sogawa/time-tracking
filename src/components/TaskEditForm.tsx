@@ -1,8 +1,7 @@
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 
 import { Task } from '../models';
 import TaskForm, { FormValues } from './TaskForm';
-import { TasksContext } from './TasksContext';
 
 type Props = {
   task: Task.Model;
@@ -10,11 +9,11 @@ type Props = {
 };
 
 const EditTaskForm: FC<Props> = ({ task, toggleEditForm }) => {
-  const { updateEditTask } = useContext(TasksContext);
   const handleSubmitEditTask = (values: FormValues) => {
-    updateEditTask({ task, values });
+    task.ref.update({ ...values });
     toggleEditForm(false);
   };
+
   return (
     <>
       <TaskForm

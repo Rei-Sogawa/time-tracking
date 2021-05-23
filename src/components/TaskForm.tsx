@@ -28,7 +28,7 @@ export type FormValues = {
   estimatedMinutes: number | null;
 };
 
-type FieldDefaultValues = {
+type DefaultFieldValues = {
   category: string;
   description: string;
   estimatedMinutes: number | string;
@@ -52,7 +52,7 @@ const TaskForm: FC<Props> = ({
     control,
     reset,
     formState: { errors },
-  } = useForm<FieldDefaultValues>({
+  } = useForm<DefaultFieldValues>({
     defaultValues: Object.entries(defaultValues).reduce((acc, [k, v]) => {
       return { ...acc, [k]: v || '' };
     }, {}),

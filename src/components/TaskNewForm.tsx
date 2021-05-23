@@ -1,14 +1,15 @@
 import { Typography } from '@material-ui/core';
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 
+import { tasksRef } from '../firebaseApp';
+import { Task } from '../models';
 import TaskForm, { FormValues } from './TaskForm';
-import { TasksContext } from './TasksContext';
 
 const NewTaskForm: FC<{}> = () => {
-  const { addNewTask } = useContext(TasksContext);
   const handleSubmitNewTask = (values: FormValues) => {
-    addNewTask(values);
+    return tasksRef.add({ ...Task.getDefaultData(), ...values });
   };
+
   return (
     <>
       <Typography variant="h6">Add New Task</Typography>
