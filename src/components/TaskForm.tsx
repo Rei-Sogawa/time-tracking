@@ -28,6 +28,12 @@ export type FormValues = {
   estimatedMinutes: number | null;
 };
 
+type FieldDefaultValues = {
+  category: string;
+  description: string;
+  estimatedMinutes: number | string;
+};
+
 type Props = {
   defaultValues?: FormValues;
   onSubmit: (values: FormValues) => void;
@@ -46,7 +52,7 @@ const TaskForm: FC<Props> = ({
     control,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<FieldDefaultValues>({
     defaultValues: Object.entries(defaultValues).reduce((acc, [k, v]) => {
       return { ...acc, [k]: v || '' };
     }, {}),
@@ -75,6 +81,7 @@ const TaskForm: FC<Props> = ({
                 field.onChange(v);
               }}
               freeSolo
+              disableClearable
               options={categories}
               style={{ width: 200 }}
               renderInput={(params) => (
