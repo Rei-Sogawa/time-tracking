@@ -1,4 +1,9 @@
-import { FieldValue, serverTimestamp, Timestamp } from '../firebaseApp';
+import {
+  FieldValue,
+  IdAndRef,
+  serverTimestamp,
+  Timestamp,
+} from '../firebaseApp';
 
 export type Data = {
   description: string;
@@ -9,6 +14,8 @@ export type Data = {
   updatedAt: Timestamp | FieldValue;
   completedAt: Timestamp | FieldValue | null;
 };
+
+export type Model = Data & IdAndRef;
 
 export const getDefaultData = (): Data => ({
   description: '',

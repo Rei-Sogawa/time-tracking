@@ -14,7 +14,8 @@ export const TasksContext = createContext({} as Values);
 export const TasksProvider: FC<{}> = ({ children }) => {
   const { tasks } = useTasksSubscription();
 
-  const { addNewTask, toggleCompleteTask, removeTask } = useTasksService();
+  const { addNewTask, updateEditTask, toggleCompleteTask, removeTask } =
+    useTasksService();
 
   const categories = uniq(
     tasks.map((_) => _.category).filter((_) => !!_) as string[]
@@ -22,7 +23,14 @@ export const TasksProvider: FC<{}> = ({ children }) => {
 
   return (
     <TasksContext.Provider
-      value={{ tasks, addNewTask, toggleCompleteTask, removeTask, categories }}
+      value={{
+        tasks,
+        addNewTask,
+        updateEditTask,
+        toggleCompleteTask,
+        removeTask,
+        categories,
+      }}
     >
       {children}
     </TasksContext.Provider>

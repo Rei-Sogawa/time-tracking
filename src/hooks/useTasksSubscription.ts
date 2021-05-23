@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-import { IdAndRef, tasksRef } from '../firebaseApp';
+import { tasksRef } from '../firebaseApp';
 import { Task } from '../models';
 
 const useTasksSubscription = () => {
-  const [values] = useCollectionData<Task.Data & IdAndRef>(tasksRef, {
+  const [values] = useCollectionData<Task.Model>(tasksRef, {
     idField: 'id',
     refField: 'ref',
     snapshotOptions: { serverTimestamps: 'estimate' },
