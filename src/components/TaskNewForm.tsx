@@ -1,19 +1,15 @@
 import { Typography } from '@material-ui/core';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
-import { tasksRef } from '../firebaseApp';
-import { Task } from '../models';
-import TaskForm, { FormValues } from './TaskForm';
+type Props = {
+  taskForm: ReactNode;
+};
 
-const NewTaskForm: FC<{}> = () => {
-  const handleSubmitNewTask = (values: FormValues) => {
-    return tasksRef.add({ ...Task.getDefaultData(), ...values });
-  };
-
+const NewTaskForm: FC<Props> = ({ taskForm }) => {
   return (
     <>
       <Typography variant="h6">Add New Task</Typography>
-      <TaskForm onSubmit={handleSubmitNewTask} />
+      {taskForm}
     </>
   );
 };

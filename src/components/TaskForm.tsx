@@ -1,11 +1,28 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { FC, FormEvent, useContext } from 'react';
+import { FC, FormEvent } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-import { TasksContext } from './TasksContext';
+export type Props = {
+  defaultValues?: FormValues;
+  categories: string[];
+  onSubmit: (values: FormValues) => void;
+};
+
+export type FormValues = {
+  category: string | null;
+  description: string;
+  estimatedMinutes: number | null;
+};
+
+// react-hooks-form の controller に undefined を初期値として与えると react が怒るので
+type DefaultFieldValues = {
+  category: string;
+  description: string;
+  estimatedMinutes: number | string;
+};
 
 const formSchema = yup.object().shape({
   category: yup
@@ -22,29 +39,13 @@ const formSchema = yup.object().shape({
     .transform((v, o) => (o === '' ? null : v)),
 });
 
-export type FormValues = {
-  category: string | null;
-  description: string;
-  estimatedMinutes: number | null;
-};
-
-type DefaultFieldValues = {
-  category: string;
-  description: string;
-  estimatedMinutes: number | string;
-};
-
-type Props = {
-  defaultValues?: FormValues;
-  onSubmit: (values: FormValues) => void;
-};
-
 const TaskForm: FC<Props> = ({
   defaultValues = {
     category: null,
     description: '',
     estimatedMinutes: null,
   },
+  categories,
   onSubmit,
 }) => {
   const {
@@ -65,8 +66,6 @@ const TaskForm: FC<Props> = ({
       reset();
     })(e);
   };
-
-  const { categories } = useContext(TasksContext);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -104,6 +103,7 @@ const TaskForm: FC<Props> = ({
               <TextField
                 {...field}
                 label="description"
+                autoComplete="off"
                 error={!!errors.description}
                 helperText={errors.description?.message}
                 fullWidth

@@ -9,19 +9,23 @@ import {
   Typography,
 } from '@material-ui/core';
 import { ArrowRightAlt, Delete, Edit, Timer } from '@material-ui/icons';
-import { useContext, useRef } from 'react';
+import { FC, ReactNode, useRef } from 'react';
 import { useClickAway, useToggle } from 'react-use';
 
 import { serverTimestamp } from '../firebaseApp';
 import { Task } from '../models';
-import TaskEditForm from './TaskEditForm';
-import { TasksContext } from './TasksContext';
+import { Props as TaskFormProps } from './TaskForm';
+import { FormValues } from './TaskForm';
 
 type Props = {
   task: Task.Model;
+  taskForm: ({
+    defaultValues,
+    onSubmit,
+  }: Pick<TaskFormProps, 'defaultValues' | 'onSubmit'>) => ReactNode;
 };
 
-const TaskListItem = ({ task }: Props) => {
+const TaskListItem: FC<Props> = ({ task, taskForm }) => {
   const [showEditForm, toggleEditForm] = useToggle(false);
 
   const taskEditFormRef = useRef(null);
@@ -35,12 +39,13 @@ const TaskListItem = ({ task }: Props) => {
 
   const handleClickEdit = () => toggleEditForm(true);
 
+  const handleSubmitEditTask = (values: FormValues) => {
+    task.ref.update({ ...values });
+    toggleEditForm(false);
+  };
+
   const handleClickRemove = () =>
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
-
-  const { focusTask } = useContext(TasksContext);
-
-  const handleClickTimer = () => focusTask(task.id);
 
   return (
     <>
@@ -48,7 +53,15 @@ const TaskListItem = ({ task }: Props) => {
         <ListItem ref={taskEditFormRef}>
           <Box width={1}>
             <Box mx={-2}>
-              <TaskEditForm task={task} toggleEditForm={toggleEditForm} />
+              {/* TaskEditForm.tsx */}
+              {taskForm({
+                defaultValues: {
+                  category: task.category,
+                  description: task.description,
+                  estimatedMinutes: task.estimatedMinutes,
+                },
+                onSubmit: handleSubmitEditTask,
+              })}
             </Box>
           </Box>
         </ListItem>
@@ -75,7 +88,7 @@ const TaskListItem = ({ task }: Props) => {
               }
             />
             <ListItemSecondaryAction>
-              <IconButton onClick={handleClickTimer}>
+              <IconButton>
                 <Timer />
               </IconButton>
               <IconButton onClick={handleClickEdit}>
