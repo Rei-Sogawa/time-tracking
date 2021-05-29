@@ -80,17 +80,11 @@ const TaskForm: FC<Props> = ({
                 field.onChange(v);
               }}
               freeSolo
-              disableClearable
+              autoSelect
               options={categories}
               style={{ width: 200 }}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="category"
-                  onChange={(e) => {
-                    field.onChange(e.target.value);
-                  }}
-                />
+                <TextField {...params} label="category" />
               )}
             />
           )}
