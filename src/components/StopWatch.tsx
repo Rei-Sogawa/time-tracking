@@ -5,7 +5,7 @@ import { FC } from 'react';
 import useStopWatch from '../hooks/useStopWatch';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  buttons: {
     display: 'flex',
     justifyContent: 'center',
     '& > *': {
@@ -15,8 +15,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StopWatch: FC<{}> = () => {
-  const classes = useStyles();
-
   const { seconds: totalSeconds, start, pause, init } = useStopWatch();
 
   const minutes = Math.floor(totalSeconds / 60);
@@ -37,12 +35,14 @@ const StopWatch: FC<{}> = () => {
     init();
   };
 
+  const classes = useStyles();
+
   return (
     <>
       <Typography align="center" variant="h1">
         {displayMinutes}:{displaySeconds}
       </Typography>
-      <div className={classes.root}>
+      <div className={classes.buttons}>
         <Button variant="contained" onClick={handleClickStart}>
           START
         </Button>

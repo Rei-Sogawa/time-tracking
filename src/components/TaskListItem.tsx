@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  makeStyles,
   Typography,
 } from '@material-ui/core';
 import { ArrowRightAlt, Delete, Edit, Timer } from '@material-ui/icons';
@@ -17,22 +18,27 @@ import { serverTimestamp } from '../firebaseApp';
 import { Task } from '../models';
 import TaskForm, { FormValues } from './TaskForm';
 
+const useStyles = makeStyles(() => ({
+  itemSecondary: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+}));
+
 type Props = {
   task: Task.Model;
 };
 
 const TaskListItem: FC<Props> = ({ task }) => {
   const [showEditForm, toggleEditForm] = useToggle(false);
-
   const taskEditFormRef = useRef(null);
+  const {
+    state: { categories },
+  } = useTasks();
 
   useClickAway(taskEditFormRef, () => toggleEditForm(false));
 
   const handleClickEdit = () => toggleEditForm(true);
-
-  const {
-    state: { categories },
-  } = useTasks();
 
   const handleSubmitEditTask = (values: FormValues) => {
     task.ref.update({ ...values });
@@ -46,6 +52,8 @@ const TaskListItem: FC<Props> = ({ task }) => {
 
   const handleClickRemove = () =>
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
+
+  const classes = useStyles();
 
   return (
     <>
@@ -94,7 +102,7 @@ const TaskListItem: FC<Props> = ({ task }) => {
                   .join(' / ');
 
                 return (
-                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                  <span className={classes.itemSecondary}>
                     {leftContent.length ? (
                       <>
                         {leftContent} / <ArrowRightAlt />
