@@ -75,10 +75,11 @@ const useStopWatch = (arg?: { offsetMilliseconds?: number }) => {
     })
   );
 
-  const isRunning = state.startTimestamp;
   const seconds = Math.floor(
     (state.offsetMilliseconds + state.runningMilliseconds) / 1000
   );
+
+  const isRunning = typeof state.startTimestamp === 'number';
 
   const start = () => {
     dispatch({ type: 'start', payload: new Date() });

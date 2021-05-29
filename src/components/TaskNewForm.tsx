@@ -8,7 +8,7 @@ import TaskForm, { FormValues } from './TaskForm';
 
 const NewTaskForm: FC = () => {
   const {
-    state: { categories },
+    selector: { categories },
   } = useTasks();
 
   const handleSubmitNewTask = (values: FormValues) => {

@@ -15,10 +15,11 @@ import { Task } from '../models';
 type State = {
   tasks: Task.Model[];
   taskIdBeingFocused: string | undefined;
-  categories: string[];
 };
 
 type Selector = {
+  categories: string[];
+  taskBeingFocused: Task.Model | undefined;
   findTaskById: (taskId: string) => Task.Model | undefined;
 };
 
@@ -61,13 +62,18 @@ const TasksProvider: FC = ({ children }) => {
   const focusTask = (taskId: string) => setTaskIdBeingFocused(taskId);
   const focusOutTask = () => setTaskIdBeingFocused(undefined);
 
+  const taskBeingFocused = taskIdBeingFocused
+    ? findTaskById(taskIdBeingFocused)
+    : undefined;
+
   const value: Value = {
     state: {
       tasks,
       taskIdBeingFocused,
-      categories,
     },
     selector: {
+      categories,
+      taskBeingFocused,
       findTaskById,
     },
     action: {

@@ -33,7 +33,9 @@ const TaskListItem: FC<Props> = ({ task }) => {
   const [showEditForm, toggleEditForm] = useToggle(false);
   const taskEditFormRef = useRef(null);
   const {
-    state: { categories },
+    state: { taskIdBeingFocused },
+    selector: { categories },
+    action: { focusTask, focusOutTask },
   } = useTasks();
 
   useClickAway(taskEditFormRef, () => toggleEditForm(false));
@@ -52,6 +54,14 @@ const TaskListItem: FC<Props> = ({ task }) => {
 
   const handleClickRemove = () =>
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
+
+  const handleClickTimer = () => {
+    if (taskIdBeingFocused === task.id) {
+      focusOutTask();
+    } else {
+      focusTask(task.id);
+    }
+  };
 
   const classes = useStyles();
 
@@ -98,7 +108,7 @@ const TaskListItem: FC<Props> = ({ task }) => {
                     ? `${estimatedMinutes} min`
                     : null,
                 ]
-                  .filter((_): _ is NonNullable<typeof _> => !!_)
+                  .filter((v): v is NonNullable<typeof v> => !!v)
                   .join(' / ');
 
                 return (
@@ -119,7 +129,7 @@ const TaskListItem: FC<Props> = ({ task }) => {
               })()}
             />
             <ListItemSecondaryAction>
-              <IconButton>
+              <IconButton onClick={handleClickTimer}>
                 <Timer />
               </IconButton>
               <IconButton onClick={handleClickEdit}>
