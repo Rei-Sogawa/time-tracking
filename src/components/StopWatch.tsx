@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 const StopWatch: FC<{}> = () => {
   const classes = useStyles();
 
-  const { seconds: totalSeconds, start, pause, reset } = useStopWatch();
+  const { seconds: totalSeconds, start, pause, init } = useStopWatch();
 
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = Math.floor(totalSeconds % 60);
@@ -34,7 +34,7 @@ const StopWatch: FC<{}> = () => {
   };
 
   const handleClickClear = () => {
-    reset();
+    init();
   };
 
   return (

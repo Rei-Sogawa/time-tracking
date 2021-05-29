@@ -1,5 +1,5 @@
 import { getTime } from 'date-fns';
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { useInterval } from 'react-use';
 
 type State = {
@@ -8,51 +8,90 @@ type State = {
   startTimestamp: number | undefined;
 };
 
-const useStopWatch = (
-  option: undefined | { offsetMilliseconds: number } = { offsetMilliseconds: 0 }
-) => {
-  const [state, setState] = useState<State>({
-    offsetMilliseconds: option.offsetMilliseconds,
-    runningMilliseconds: 0,
-    startTimestamp: undefined,
-  });
+type Action =
+  | {
+      type: 'start';
+      payload: Date;
+    }
+  | {
+      type: 'count';
+      payload: Date;
+    }
+  | {
+      type: 'pause';
+    }
+  | { type: 'init'; payload: number };
 
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'start': {
+      if (state.startTimestamp) return state;
+      return { ...state, startTimestamp: getTime(action.payload) };
+    }
+    case 'count': {
+      if (!state.startTimestamp) return state;
+      const runningMilliseconds =
+        getTime(action.payload) - state.startTimestamp;
+      return {
+        ...state,
+        runningMilliseconds,
+      };
+    }
+    case 'pause': {
+      if (!state.startTimestamp) return state;
+      return {
+        ...state,
+        offsetMilliseconds:
+          state.offsetMilliseconds + state.runningMilliseconds,
+        runningMilliseconds: 0,
+        startTimestamp: undefined,
+      };
+    }
+    case 'init': {
+      if (state.startTimestamp) return state;
+      return {
+        ...state,
+        offsetMilliseconds: action.payload,
+        runningMilliseconds: 0,
+        startTimestamp: undefined,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+const useStopWatch = (arg?: { offsetMilliseconds?: number }) => {
+  const [state, dispatch] = useReducer(
+    reducer,
+    arg?.offsetMilliseconds,
+    (offsetMilliseconds) => ({
+      offsetMilliseconds: offsetMilliseconds || 0,
+      runningMilliseconds: 0,
+      startTimestamp: undefined,
+    })
+  );
+
+  const isRunning = state.startTimestamp;
   const seconds = Math.floor(
     (state.offsetMilliseconds + state.runningMilliseconds) / 1000
   );
-  const isRunning = !!state.startTimestamp;
 
   const start = () => {
-    if (isRunning) return;
-    const date = new Date();
-    setState((prev) => ({ ...prev, startTimestamp: getTime(date) }));
+    dispatch({ type: 'start', payload: new Date() });
   };
 
   const count = () => {
-    if (!isRunning) return;
-    const date = new Date();
-    const currentTimestamp = getTime(date);
-    const runningMilliseconds = currentTimestamp - state.startTimestamp!;
-    setState((prev) => ({ ...prev, runningMilliseconds }));
+    dispatch({ type: 'count', payload: new Date() });
   };
 
   const pause = () => {
-    if (!isRunning) return;
-    setState((prev) => ({
-      ...prev,
-      offsetMilliseconds: prev.offsetMilliseconds + prev.runningMilliseconds,
-      runningMilliseconds: 0,
-      startTimestamp: undefined,
-    }));
+    dispatch({ type: 'pause' });
   };
 
-  const reset = (offsetMilliseconds: number | undefined = 0) => {
-    if (isRunning) return;
-    setState((prev) => ({
-      ...prev,
-      offsetMilliseconds,
-      runningMilliseconds: 0,
-    }));
+  const init = (offsetMillisecond?: number) => {
+    dispatch({ type: 'init', payload: offsetMillisecond || 0 });
   };
 
   useInterval(
@@ -67,7 +106,7 @@ const useStopWatch = (
     isRunning,
     start,
     pause,
-    reset,
+    init,
   };
 };
 
