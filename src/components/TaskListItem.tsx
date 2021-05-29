@@ -81,15 +81,34 @@ const TaskListItem: FC<Props> = ({ task }) => {
               primary={
                 <Typography color="textPrimary">{task.description}</Typography>
               }
-              secondary={
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {task.category && `${task.category} / `}
-                  {typeof task.estimatedMinutes === 'number' &&
-                    `${task.estimatedMinutes}min`}
-                  <ArrowRightAlt />
-                  {Math.floor(task.requiredSeconds / 60)}min
-                </span>
-              }
+              secondary={(() => {
+                const { category, estimatedMinutes, requiredSeconds } = task;
+                const requiredMinutes = Math.floor(requiredSeconds / 60);
+                const leftContent = [
+                  category,
+                  typeof estimatedMinutes === 'number'
+                    ? `${estimatedMinutes} min`
+                    : null,
+                ]
+                  .filter((_): _ is NonNullable<typeof _> => !!_)
+                  .join(' / ');
+
+                return (
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    {leftContent.length ? (
+                      <>
+                        {leftContent} / <ArrowRightAlt />
+                        {requiredMinutes} min
+                      </>
+                    ) : (
+                      <>
+                        <ArrowRightAlt />
+                        {requiredMinutes} min
+                      </>
+                    )}
+                  </span>
+                );
+              })()}
             />
             <ListItemSecondaryAction>
               <IconButton>

@@ -1,5 +1,5 @@
 import { uniq } from 'ramda';
-import { createContext, FC, useContext, useMemo } from 'react';
+import { createContext, FC, useCallback, useContext, useMemo } from 'react';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 import { tasksRef } from '../firebaseApp';
@@ -10,7 +10,12 @@ type State = {
   categories: string[];
 };
 
-const TasksContext = createContext<{ state: State } | undefined>(undefined);
+type Selector = {
+  findTaskById: (taskId: string) => Task.Model | undefined;
+};
+
+const TasksContext =
+  createContext<{ state: State; selector: Selector } | undefined>(undefined);
 
 const TasksProvider: FC = ({ children }) => {
   const [values] = useCollectionData<Task.Model>(tasksRef, {
@@ -30,10 +35,18 @@ const TasksProvider: FC = ({ children }) => {
     [tasks]
   );
 
+  const findTaskById = useCallback(
+    (taskId: string) => tasks.find(({ id }) => id === taskId),
+    [tasks]
+  );
+
   const value = {
     state: {
       tasks,
       categories,
+    },
+    selector: {
+      findTaskById,
     },
   };
 
