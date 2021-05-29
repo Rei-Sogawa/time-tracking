@@ -22,7 +22,7 @@ type Selector = {
   findTaskById: (taskId: string) => Task.Model | undefined;
 };
 
-type ActionCreator = {
+type Action = {
   focusTask: (taskId: string) => void;
   focusOutTask: () => void;
 };
@@ -30,7 +30,7 @@ type ActionCreator = {
 type Value = {
   state: State;
   selector: Selector;
-  actionCreator: ActionCreator;
+  action: Action;
 };
 
 const TasksContext = createContext<Value | undefined>(undefined);
@@ -70,7 +70,7 @@ const TasksProvider: FC = ({ children }) => {
     selector: {
       findTaskById,
     },
-    actionCreator: {
+    action: {
       focusTask,
       focusOutTask,
     },
