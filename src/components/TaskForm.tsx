@@ -82,10 +82,10 @@ const TaskForm: FC<Props> = ({
               freeSolo
               autoSelect
               options={categories}
-              style={{ width: 200 }}
               renderInput={(params) => (
                 <TextField {...params} label="category" />
               )}
+              style={{ minWidth: 180 }}
             />
           )}
         />
@@ -116,6 +116,7 @@ const TaskForm: FC<Props> = ({
                 label="estimated minutes"
                 error={!!errors.estimatedMinutes}
                 helperText={errors.estimatedMinutes?.message}
+                style={{ minWidth: 180 }}
               />
             )}
           />
