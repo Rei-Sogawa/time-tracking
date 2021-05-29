@@ -4,6 +4,7 @@ import { FC } from 'react';
 import StopWatch from './components/StopWatch';
 import TaskList from './components/TaskList';
 import TaskNewForm from './components/TaskNewForm';
+import { StopWatchProvider } from './contexts/stopWatch';
 import { TasksProvider } from './contexts/tasks';
 
 const Wrapper: FC = () => {
@@ -11,7 +12,9 @@ const Wrapper: FC = () => {
     <>
       <CssBaseline />
       <TasksProvider>
-        <App />
+        <StopWatchProvider>
+          <App />
+        </StopWatchProvider>
       </TasksProvider>
     </>
   );

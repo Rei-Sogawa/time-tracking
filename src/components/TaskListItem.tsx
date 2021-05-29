@@ -13,6 +13,7 @@ import { ArrowRightAlt, Delete, Edit, Timer } from '@material-ui/icons';
 import { FC, useRef } from 'react';
 import { useClickAway, useToggle } from 'react-use';
 
+import { useStopWatch } from '../contexts/stopWatch';
 import { useTasks } from '../contexts/tasks';
 import { serverTimestamp } from '../firebaseApp';
 import { Task } from '../models';
@@ -37,6 +38,9 @@ const TaskListItem: FC<Props> = ({ task }) => {
     selector: { categories },
     action: { focusTask, focusOutTask },
   } = useTasks();
+  const {
+    state: { isRunning },
+  } = useStopWatch();
 
   useClickAway(taskEditFormRef, () => toggleEditForm(false));
 
@@ -56,7 +60,7 @@ const TaskListItem: FC<Props> = ({ task }) => {
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
 
   const handleClickTimer = () => {
-    if (taskIdBeingFocused === task.id) {
+    if (!isRunning && taskIdBeingFocused === task.id) {
       focusOutTask();
     } else {
       focusTask(task.id);

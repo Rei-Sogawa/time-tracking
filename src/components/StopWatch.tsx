@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FC, useEffect } from 'react';
 import { useTitle } from 'react-use';
 
+import { useStopWatch as useGlobalStopWatch } from '../contexts/stopWatch';
 import { useTasks } from '../contexts/tasks';
 import useStopWatch from '../hooks/useStopWatch';
 
@@ -30,6 +31,10 @@ const StopWatch: FC = () => {
     init,
   } = useStopWatch();
 
+  const {
+    action: { start: startGlobalStopWatch, pause: pauseGlobalStopWatch },
+  } = useGlobalStopWatch();
+
   useEffect(() => {
     init(
       taskBeingFocused ? taskBeingFocused.requiredSeconds * 1000 : undefined
@@ -48,6 +53,7 @@ const StopWatch: FC = () => {
   useTitle(taskBeingFocused ? displayStopWatchTime : 'Time Logger');
 
   const handleClickStart = () => {
+    startGlobalStopWatch();
     start();
   };
 
@@ -55,6 +61,7 @@ const StopWatch: FC = () => {
     if (taskBeingFocused) {
       taskBeingFocused.ref.update({ requiredSeconds: totalSeconds });
     }
+    pauseGlobalStopWatch();
     pause();
   };
 
