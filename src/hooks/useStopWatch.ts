@@ -23,22 +23,24 @@ type Action =
   | { type: 'init'; payload: number };
 
 const reducer = (state: State, action: Action): State => {
+  const isRunning = typeof state.startTimestamp === 'number';
+
   switch (action.type) {
     case 'start': {
-      if (state.startTimestamp) return state;
+      if (isRunning) return state;
       return { ...state, startTimestamp: getTime(action.payload) };
     }
     case 'count': {
-      if (!state.startTimestamp) return state;
+      if (!isRunning) return state;
       const runningMilliseconds =
-        getTime(action.payload) - state.startTimestamp;
+        getTime(action.payload) - (state.startTimestamp as number);
       return {
         ...state,
         runningMilliseconds,
       };
     }
     case 'pause': {
-      if (!state.startTimestamp) return state;
+      if (!isRunning) return state;
       return {
         ...state,
         offsetMilliseconds:
@@ -48,7 +50,7 @@ const reducer = (state: State, action: Action): State => {
       };
     }
     case 'init': {
-      if (state.startTimestamp) return state;
+      if (isRunning) return state;
       return {
         ...state,
         offsetMilliseconds: action.payload,
