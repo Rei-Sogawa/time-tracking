@@ -1,24 +1,19 @@
 import { Divider, List } from '@material-ui/core';
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 
-import { Task } from '../models';
-import { Props as TaskFormProps } from './TaskForm';
+import { useTasks } from '../contexts/tasks';
 import TaskListItem from './TaskListItem';
 
-type Props = {
-  tasks: Task.Model[];
-  taskForm: ({
-    defaultValues,
-    onSubmit,
-  }: Pick<TaskFormProps, 'defaultValues' | 'onSubmit'>) => ReactNode;
-};
+const TaskList: FC = () => {
+  const {
+    state: { tasks },
+  } = useTasks();
 
-const TaskList: FC<Props> = ({ tasks, taskForm }) => {
   return (
     <List>
       {tasks.map((task, index) => (
         <div key={task.id}>
-          <TaskListItem task={task} taskForm={taskForm} />
+          <TaskListItem task={task} />
           {index !== tasks.length - 1 && <Divider />}
         </div>
       ))}

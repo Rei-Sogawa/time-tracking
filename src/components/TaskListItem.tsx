@@ -9,40 +9,40 @@ import {
   Typography,
 } from '@material-ui/core';
 import { ArrowRightAlt, Delete, Edit, Timer } from '@material-ui/icons';
-import { FC, ReactNode, useRef } from 'react';
+import { FC, useRef } from 'react';
 import { useClickAway, useToggle } from 'react-use';
 
+import { useTasks } from '../contexts/tasks';
 import { serverTimestamp } from '../firebaseApp';
 import { Task } from '../models';
-import { Props as TaskFormProps } from './TaskForm';
-import { FormValues } from './TaskForm';
+import TaskForm, { FormValues } from './TaskForm';
 
 type Props = {
   task: Task.Model;
-  taskForm: ({
-    defaultValues,
-    onSubmit,
-  }: Pick<TaskFormProps, 'defaultValues' | 'onSubmit'>) => ReactNode;
 };
 
-const TaskListItem: FC<Props> = ({ task, taskForm }) => {
+const TaskListItem: FC<Props> = ({ task }) => {
   const [showEditForm, toggleEditForm] = useToggle(false);
 
   const taskEditFormRef = useRef(null);
 
   useClickAway(taskEditFormRef, () => toggleEditForm(false));
 
-  const handleToggleComplete = () =>
-    task.ref.update({
-      completedAt: task.completedAt ? null : serverTimestamp(),
-    });
-
   const handleClickEdit = () => toggleEditForm(true);
+
+  const {
+    state: { categories },
+  } = useTasks();
 
   const handleSubmitEditTask = (values: FormValues) => {
     task.ref.update({ ...values });
     toggleEditForm(false);
   };
+
+  const handleToggleComplete = () =>
+    task.ref.update({
+      completedAt: task.completedAt ? null : serverTimestamp(),
+    });
 
   const handleClickRemove = () =>
     window.confirm('タスクを削除します。よろしいですか？') && task.ref.delete();
@@ -50,18 +50,19 @@ const TaskListItem: FC<Props> = ({ task, taskForm }) => {
   return (
     <>
       {showEditForm ? (
+        /* TaskEditForm */
         <ListItem ref={taskEditFormRef}>
           <Box width={1}>
             <Box mx={-2}>
-              {/* TaskEditForm.tsx */}
-              {taskForm({
-                defaultValues: {
+              <TaskForm
+                defaultValues={{
                   category: task.category,
                   description: task.description,
                   estimatedMinutes: task.estimatedMinutes,
-                },
-                onSubmit: handleSubmitEditTask,
-              })}
+                }}
+                categories={categories}
+                onSubmit={handleSubmitEditTask}
+              />
             </Box>
           </Box>
         </ListItem>
@@ -69,10 +70,12 @@ const TaskListItem: FC<Props> = ({ task, taskForm }) => {
         <ListItem>
           <ListItemIcon>
             <ListItemIcon>
-              <Checkbox
-                checked={!!task.completedAt}
-                onChange={handleToggleComplete}
-              />
+              <Box display="flex" alignItems="center">
+                <Checkbox
+                  checked={!!task.completedAt}
+                  onChange={handleToggleComplete}
+                />
+              </Box>
             </ListItemIcon>
             <ListItemText
               primary={
@@ -81,7 +84,8 @@ const TaskListItem: FC<Props> = ({ task, taskForm }) => {
               secondary={
                 <span style={{ display: 'flex', alignItems: 'center' }}>
                   {task.category && `${task.category} / `}
-                  {task.estimatedMinutes && `${task.estimatedMinutes}min`}
+                  {typeof task.estimatedMinutes === 'number' &&
+                    `${task.estimatedMinutes}min`}
                   <ArrowRightAlt />
                   {Math.floor(task.requiredSeconds / 60)}min
                 </span>

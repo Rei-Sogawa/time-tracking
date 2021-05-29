@@ -17,7 +17,7 @@ export type FormValues = {
   estimatedMinutes: number | null;
 };
 
-// react-hooks-form の controller に undefined を初期値として与えると react が怒るので
+// react-hooks-form の controller に undefined を初期値として与えると react が怒る
 type DefaultFieldValues = {
   category: string;
   description: string;
@@ -55,7 +55,7 @@ const TaskForm: FC<Props> = ({
     formState: { errors },
   } = useForm<DefaultFieldValues>({
     defaultValues: Object.entries(defaultValues).reduce((acc, [k, v]) => {
-      return { ...acc, [k]: v || '' };
+      return { ...acc, [k]: v !== null ? v : '' };
     }, {}),
     resolver: yupResolver(formSchema),
   });
